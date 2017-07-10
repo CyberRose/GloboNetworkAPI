@@ -425,12 +425,19 @@ def trata_param_vip(vips):
                     vip_cache_filter['optionsvip']['l4_protocol'] = \
                         port['options']['l4_protocol']
                     for definition in definitions.get(str(port['port'])):
+
                         if definition.get('type') == 'pool':
                             vip_cache_filter['pool'] = definition.get('value')
+
+                        if definition.get('type') == 'auto_lasthop':
+                            vip_cache_filter[
+                                'auto_lasthop'] = definition.get('value')
+
                         if definition.get('type') == 'rule':
                             if definition.get('value'):
                                 vip_cache_filter['rules'] = [
                                     definition.get('value')]
+
                         if definition.get('type') == 'profile':
                             vip_cache_filter['optionsvip_extended'] = {
                                 'requiments': [{

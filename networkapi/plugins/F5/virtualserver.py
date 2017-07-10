@@ -84,6 +84,11 @@ class VirtualServer(F5Base):
             'values': list()
         }
 
+        vip_auto_lasthop = {
+            'virtual_addresses': list(),
+            'auto_lasthop': list()
+        }
+
         rule_l7 = list()
 
         fastl4 = ProfileFastL4(self._lb)
@@ -106,8 +111,8 @@ class VirtualServer(F5Base):
                     vip_request['optionsvip']['l4_protocol']['nome_opcao_txt'].lower())
             })
 
-            #Check VIP type and apply wildmask
-            if ":" in vip_request['address']:
+            # Check VIP type and apply wildmask
+            if ':' in vip_request['address']:
                 vip_wildmasks.append('ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff')
             else:
                 vip_wildmasks.append('255.255.255.255')
@@ -151,6 +156,11 @@ class VirtualServer(F5Base):
             if rules:
                 vip_rules['rules'].append(rules)
                 vip_rules['virtual_servers'].append(vip_request['name'])
+
+            if vip_request['auto_lasthop']:
+                vip_auto_lasthop['auto_lasthop'].append(
+                    vip_request['auto_lasthop'])
+                vip_auto_lasthop['virtual_servers'].append(vip_request['name'])
 
         try:
             self._lb._channel.System.Session.start_transaction()
@@ -197,6 +207,8 @@ class VirtualServer(F5Base):
 
                 self.__set_translate_port_state(
                     self.__properties['translate_port_state'])
+
+                self.__set_auto_lasthop(vip_auto_lasthop)
 
             except Exception, e:
                 log.error(e)
@@ -341,6 +353,11 @@ class VirtualServer(F5Base):
             'values': list()
         }
 
+        vip_auto_lasthop = {
+            'virtual_addresses': list(),
+            'auto_lasthop': list()
+        }
+
         rule_l7 = list()
         rule_l7_delete = list()
 
@@ -384,6 +401,11 @@ class VirtualServer(F5Base):
                 vip_rules['rules'].append(rules)
                 vip_rules['virtual_servers'].append(vip_request['name'])
 
+            if vip_request['auto_lasthop']:
+                vip_auto_lasthop['auto_lasthop'].append(
+                    vip_request['auto_lasthop'])
+                vip_auto_lasthop['virtual_servers'].append(vip_request['name'])
+
         try:
             self._lb._channel.System.Session.start_transaction()
 
@@ -426,6 +448,8 @@ class VirtualServer(F5Base):
 
                 self.__set_translate_port_state(
                     self.__properties['translate_port_state'])
+
+                self.__set_auto_lasthop(vip_auto_lasthop)
 
             except Exception, e:
                 log.error(e)
@@ -625,6 +649,14 @@ class VirtualServer(F5Base):
             pl.set_server_ip_tos(
                 values=dscp['values'],
                 pool_names=dscp['pool_names']
+            )
+
+    @logger
+    def __set_auto_lasthop(self, auto_lasthop):
+        if auto_lasthop['auto_lasthop']:
+            self._lb._channel.LocalLB.VirtualServer.set_auto_lasthop(
+                virtual_servers=auto_lasthop['virtual_servers'],
+                values=auto_lasthop['auto_lasthop']
             )
 
     def __prepare_properties(self, vip_request, profiles_list, update=False):
