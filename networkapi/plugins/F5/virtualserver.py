@@ -85,8 +85,8 @@ class VirtualServer(F5Base):
         }
 
         vip_auto_lasthop = {
-            'virtual_addresses': list(),
-            'auto_lasthop': list()
+            'virtual_servers': list(),
+            'values': list()
         }
 
         rule_l7 = list()
@@ -157,8 +157,8 @@ class VirtualServer(F5Base):
                 vip_rules['rules'].append(rules)
                 vip_rules['virtual_servers'].append(vip_request['name'])
 
-            if vip_request['auto_lasthop']:
-                vip_auto_lasthop['auto_lasthop'].append(
+            if vip_request.get('auto_lasthop'):
+                vip_auto_lasthop['values'].append(
                     vip_request['auto_lasthop'])
                 vip_auto_lasthop['virtual_servers'].append(vip_request['name'])
 
@@ -354,8 +354,8 @@ class VirtualServer(F5Base):
         }
 
         vip_auto_lasthop = {
-            'virtual_addresses': list(),
-            'auto_lasthop': list()
+            'virtual_servers': list(),
+            'values': list()
         }
 
         rule_l7 = list()
@@ -401,8 +401,8 @@ class VirtualServer(F5Base):
                 vip_rules['rules'].append(rules)
                 vip_rules['virtual_servers'].append(vip_request['name'])
 
-            if vip_request['auto_lasthop']:
-                vip_auto_lasthop['auto_lasthop'].append(
+            if vip_request.get('auto_lasthop'):
+                vip_auto_lasthop['values'].append(
                     vip_request['auto_lasthop'])
                 vip_auto_lasthop['virtual_servers'].append(vip_request['name'])
 
@@ -653,10 +653,11 @@ class VirtualServer(F5Base):
 
     @logger
     def __set_auto_lasthop(self, auto_lasthop):
-        if auto_lasthop['auto_lasthop']:
+
+        if auto_lasthop['values']:
             self._lb._channel.LocalLB.VirtualServer.set_auto_lasthop(
                 virtual_servers=auto_lasthop['virtual_servers'],
-                values=auto_lasthop['auto_lasthop']
+                values=auto_lasthop['values']
             )
 
     def __prepare_properties(self, vip_request, profiles_list, update=False):
