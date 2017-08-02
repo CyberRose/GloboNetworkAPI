@@ -444,7 +444,7 @@ class Vlan(BaseModel):
 
             serializer = vlan_slz.VlanV3Serializer(
                 self,
-                include=('environment__basic',),
+                include=('environment__basic','networks_ipv4', 'networks_ipv6'),
                 exclude=(
                     'acl_draft',
                     'acl_draft_v6',
@@ -493,7 +493,7 @@ class Vlan(BaseModel):
 
             serializer = vlan_slz.VlanV3Serializer(
                 self,
-                include=('environment__basic',),
+                include=('environment__basic','networks_ipv4', 'networks_ipv6'),
                 exclude=(
                     'acl_draft',
                     'acl_draft_v6',
