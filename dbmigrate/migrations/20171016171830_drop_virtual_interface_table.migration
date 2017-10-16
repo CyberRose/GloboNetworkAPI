@@ -1,0 +1,15 @@
+#-*- coding:utf-8 -*-
+SQL_UP = u"""
+
+DROP TABLE IF EXISTS `virtual_interface`
+
+"""
+
+SQL_DOWN = u"""
+
+CREATE TABLE IF NOT EXISTS `virtual_interface` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `name` VARCHAR(45) NULL COMMENT '',
+  PRIMARY KEY (`id`));
+
+"""
