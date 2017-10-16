@@ -86,9 +86,10 @@ class Neighbor(BaseModel):
 
     created = models.BooleanField(db_column='created')
 
-    virtual_interface = models.ForeignKey(
-        'api_virtual_interface.VirtualInterface',
-        db_column='id_virtual_interface'
+    virtual_interface = models.CharField(
+        blank=True,
+        max_length=45,
+        db_column='virtual_interface'
     )
 
     log = logging.getLogger('Neighbor')
@@ -138,10 +139,7 @@ class Neighbor(BaseModel):
         self.remove_private_as = neighbor_map.get('remove_private_as')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
-        # self.created =  neighbor_map.get('created')
-        self.virtual_interface = vi_model.get_by_pk(
-            neighbor_map.get('virtual_interface')
-        )
+        self.virtual_interface = neighbor_map.get('virtual_interface')
 
         self.save()
 
@@ -162,10 +160,7 @@ class Neighbor(BaseModel):
         self.remove_private_as = neighbor_map.get('remove_private_as')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
-        # self.created =  neighbor_map.get('created')
-        self.virtual_interface = vi_model.get_by_pk(
-            neighbor_map.get('virtual_interface')
-        )
+        self.virtual_interface = neighbor_map.get('virtual_interface')
 
         self.save()
 
