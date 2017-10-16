@@ -1,0 +1,14 @@
+#-*- coding:utf-8 -*-
+SQL_UP = u"""
+
+ALTER TABLE `neighbor`
+ADD COLUMN `virtual_interface` VARCHAR(45) NULL AFTER `remote_ip`;
+
+"""
+
+SQL_DOWN = u"""
+
+ALTER TABLE `neighbor`
+DROP COLUMN `virtual_interface`;
+
+"""
