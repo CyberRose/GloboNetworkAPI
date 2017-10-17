@@ -339,7 +339,6 @@ PROJECT_APPS = (
     'networkapi.api_task',
     'networkapi.api_usuario',
     'networkapi.api_vip_request',
-    'networkapi.api_virtual_interface',
     'networkapi.api_vlan',
     'networkapi.api_vrf',
     'networkapi.blockrules',
@@ -555,14 +554,6 @@ SPECS = {
     'ipv6_put_v4': os.path.join(
         PROJECT_ROOT_PATH,
         'api_ip/v4/specs/ipv6_put.json'
-    ),
-    'virtual_interface_post_v4': os.path.join(
-        PROJECT_ROOT_PATH,
-        'api_virtual_interface/v4/specs/virtual_interface_post.json'
-    ),
-    'virtual_interface_put_v4': os.path.join(
-        PROJECT_ROOT_PATH,
-        'api_virtual_interface/v4/specs/virtual_interface_put.json'
     ),
     'neighbor_post_v4': os.path.join(
         PROJECT_ROOT_PATH,
