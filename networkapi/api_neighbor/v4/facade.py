@@ -8,9 +8,6 @@ from networkapi.infrastructure.ipaddr import IPAddress
 
 from networkapi.api_vrf.models import Vrf
 from networkapi.api_as.models import As
-from networkapi.api_virtual_interface.models import VirtualInterface
-from networkapi.api_virtual_interface.v4.serializers import \
-    VirtualInterfaceV4Serializer
 from networkapi.api_neighbor.models import Neighbor
 from networkapi.api_neighbor.v4 import exceptions
 from networkapi.api_neighbor.v4.exceptions import NeighborErrorV4
@@ -132,13 +129,13 @@ def delete_neighbor(neighbor_ids):
 def get_equipment(id_, remote_ip):
 
     version_ip = IPAddress(remote_ip).version
-
-    if version_ip == 4:
-        return Equipamento.objects.get(
-            ipequipamento__virtual_interface__neighbor=id_)
-    else:
-        return Equipamento.objects.get(
-            ipv6equipament__virtual_interface__neighbor=id_)
+    # TODO Refactor it
+    # if version_ip == 4:
+    #     return Equipamento.objects.get(
+    #         ipequipamento__virtual_interface__neighbor=id_)
+    # else:
+    #     return Equipamento.objects.get(
+    #         ipv6equipament__virtual_interface__neighbor=id_)
 
 
 @commit_on_success
