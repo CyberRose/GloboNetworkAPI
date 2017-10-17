@@ -1,0 +1,28 @@
+#-*- coding:utf-8 -*-
+SQL_UP = u"""
+
+DROP TABLE `as_equipment`;
+
+"""
+
+SQL_DOWN = u"""
+
+CREATE TABLE IF NOT EXISTS `as_equipment` (
+  `id` INT NOT NULL COMMENT '',
+  `id_as` INT UNSIGNED NOT NULL COMMENT '',
+  `id_equipment` INT(10) UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`),
+  INDEX `fk_as_equipment_as_idx` (`id_as` ASC),
+  INDEX `fk_as_equipment_equipamentos1_idx` (`id_equipment` ASC),
+  CONSTRAINT `fk_as_equipment_as`
+    FOREIGN KEY (`id_as`)
+    REFERENCES `as` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_as_equipment_equipamentos1`
+    FOREIGN KEY (`id_equipment`)
+    REFERENCES `equipamentos` (`id_equip`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION);
+
+"""
