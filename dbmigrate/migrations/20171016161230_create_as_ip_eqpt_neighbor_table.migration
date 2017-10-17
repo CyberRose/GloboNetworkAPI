@@ -1,0 +1,36 @@
+#-*- coding:utf-8 -*-
+SQL_UP = u"""
+
+CREATE TABLE IF NOT EXISTS `as_ip_eqpt` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `id_as` INT UNSIGNED NOT NULL COMMENT '',
+  `id_ipv4_eqpt` INT UNSIGNED NULL COMMENT '',
+  `id_ipv6_eqpt` INT UNSIGNED NULL COMMENT '',
+  PRIMARY KEY (`id`),
+  INDEX `fk_as_ip_eqpt_as_idx` (`id_as` ASC),
+  INDEX `fk_as_ip_eqpt_ipv4_eqpt_idx` (`id_ipv4_eqpt` ASC),
+  INDEX `fk_as_ip_eqpt_ipv6_eqpt_idx` (`id_ipv6_eqpt` ASC),
+  CONSTRAINT `fk_as_ip_eqpt_as`
+    FOREIGN KEY (`id_as`)
+    REFERENCES `as` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_as_ip_eqpt_ipv4_eqpt`
+    FOREIGN KEY (`id_ipv4_eqpt`)
+    REFERENCES `ips_dos_equipamentos` (`id_ips_dos_equipamentos`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_as_ip_eqpt_ipv6_eqpt`
+    FOREIGN KEY (`id_ipv6_eqpt`)
+    REFERENCES `ipsv6_dos_equipamentos` (`id_ipsv6_dos_equipamentos`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+"""
+
+SQL_DOWN = u"""
+
+DROP TABLE `as_ip_eqpt`;
+
+"""
