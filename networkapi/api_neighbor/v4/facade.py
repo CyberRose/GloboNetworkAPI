@@ -129,7 +129,7 @@ def delete_neighbor(neighbor_ids):
 def get_equipment(id_, remote_ip):
 
     pass
-    # TODO: Refactor it
+    # TODO BGP Refactor
     # version_ip = IPAddress(remote_ip).version
     #
     # if version_ip == 4:
