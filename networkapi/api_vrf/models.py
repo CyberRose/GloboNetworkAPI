@@ -106,9 +106,6 @@ class Vrf(BaseModel):
         @raise VrfAssociatedToVlanEquipment: At least one Vlan and Equipment are
                                              associated together to this Vrf
 
-        @raise VrfAssociatedToVirtualInterface: At least one Virtual Interface
-                                                is associated to this Vrf
-
         """
 
         vrf = Vrf().get_by_pk(pk)

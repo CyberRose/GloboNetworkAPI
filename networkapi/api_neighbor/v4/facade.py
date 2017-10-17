@@ -141,6 +141,8 @@ def get_equipment(id_, remote_ip):
 @commit_on_success
 def deploy_neighbors(neighbors):
 
+    # TODO Refactor it
+
     deployed_ids = list()
     for neighbor in neighbors:
         id_ = neighbor['id']
@@ -158,15 +160,15 @@ def deploy_neighbors(neighbors):
             asn = As.objects.get(asequipment__equipment=equipment.id)
             vrf = Vrf.objects.get(virtualinterface__id=
                                      neighbor['virtual_interface'])
-            virtual_interface = VirtualInterface.get_by_pk(
-                neighbor['virtual_interface'])
+            # virtual_interface = VirtualInterface.get_by_pk(
+            #     neighbor['virtual_interface'])
 
             asn = AsV4Serializer(asn).data
             vrf = VrfV3Serializer(vrf).data
-            virtual_interface = VirtualInterfaceV4Serializer(
-                virtual_interface).data
+            # virtual_interface = VirtualInterfaceV4Serializer(
+            #     virtual_interface).data
 
-            plugin.bgp(neighbor, virtual_interface, asn, vrf).deploy_neighbor()
+            # plugin.bgp(neighbor, virtual_interface, asn, vrf).deploy_neighbor()
 
         except Exception as e:
             raise NetworkAPIException(e.message)
@@ -179,6 +181,8 @@ def deploy_neighbors(neighbors):
 
 @commit_on_success
 def undeploy_neighbors(neighbors):
+
+    # TODO Refactor it
 
     undeployed_ids = list()
     for neighbor in neighbors:
@@ -197,16 +201,16 @@ def undeploy_neighbors(neighbors):
             asn = As.objects.get(asequipment__equipment=equipment.id)
             vrf = Vrf.objects.get(virtualinterface__id=
                                      neighbor['virtual_interface'])
-            virtual_interface = VirtualInterface.get_by_pk(
-                neighbor['virtual_interface'])
+            # virtual_interface = VirtualInterface.get_by_pk(
+            #     neighbor['virtual_interface'])
 
             asn = AsV4Serializer(asn).data
             vrf = VrfV3Serializer(vrf).data
-            virtual_interface = VirtualInterfaceV4Serializer(
-                virtual_interface).data
+            # virtual_interface = VirtualInterfaceV4Serializer(
+            #     virtual_interface).data
 
-            plugin.bgp(neighbor, virtual_interface, asn, vrf).\
-                undeploy_neighbor()
+            # plugin.bgp(neighbor, virtual_interface, asn, vrf).\
+            #     undeploy_neighbor()
 
         except Exception as e:
             raise NetworkAPIException(e.message)

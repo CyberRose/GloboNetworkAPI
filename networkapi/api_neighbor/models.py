@@ -125,8 +125,6 @@ class Neighbor(BaseModel):
     def create_v4(self, neighbor_map):
         """Create Neighbor."""
 
-        vi_model = get_model('api_virtual_interface', 'VirtualInterface')
-
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password =  neighbor_map.get('password')
@@ -145,8 +143,6 @@ class Neighbor(BaseModel):
 
     def update_v4(self, neighbor_map):
         """Update Neighbor."""
-
-        vi_model = get_model('api_virtual_interface', 'VirtualInterface')
 
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')

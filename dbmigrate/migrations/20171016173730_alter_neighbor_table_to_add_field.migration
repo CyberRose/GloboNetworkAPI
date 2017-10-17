@@ -2,13 +2,23 @@
 SQL_UP = u"""
 
 ALTER TABLE `neighbor`
-ADD COLUMN `virtual_interface` VARCHAR(45) NULL AFTER `remote_ip`;
+ADD COLUMN `virtual_interface` VARCHAR(45) NULL AFTER `remote_ip`,
+ADD COLUMN `id_as_ip_eqpt` INT UNSIGNED NOT NULL COMMENT '',
+ADD INDEX `fk_neighbor_id_as_ip_eqpt_idx` (`id_as_ip_eqpt` ASC),
+ADD CONSTRAINT `fk_neighbor_id_as_ip_eqpt`
+    FOREIGN KEY (`id_as_ip_eqpt`)
+    REFERENCES `as_ip_eqpt` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION;
 
 """
 
 SQL_DOWN = u"""
 
 ALTER TABLE `neighbor`
-DROP COLUMN `virtual_interface`;
+DROP FOREIGN KEY `fk_neighbor_id_as_ip_eqpt`;
+
+ALTER TABLE `neighbor`
+DROP COLUMN  `id_as_ip_eqpt`;
 
 """
