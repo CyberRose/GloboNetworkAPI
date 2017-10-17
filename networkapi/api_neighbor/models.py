@@ -65,6 +65,12 @@ class Neighbor(BaseModel):
         db_column='description'
     )
 
+    virtual_interface = models.CharField(
+        blank=False,
+        max_length=45,
+        db_column='virtual_interface'
+    )
+
     soft_reconfiguration = models.BooleanField(
         db_column='soft_reconfiguration')
 
@@ -85,11 +91,6 @@ class Neighbor(BaseModel):
     )
 
     created = models.BooleanField(db_column='created')
-
-    virtual_interface = models.ForeignKey(
-        'api_virtual_interface.VirtualInterface',
-        db_column='id_virtual_interface'
-    )
 
     log = logging.getLogger('Neighbor')
 
@@ -124,8 +125,6 @@ class Neighbor(BaseModel):
     def create_v4(self, neighbor_map):
         """Create Neighbor."""
 
-        vi_model = get_model('api_virtual_interface', 'VirtualInterface')
-
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password =  neighbor_map.get('password')
@@ -138,17 +137,12 @@ class Neighbor(BaseModel):
         self.remove_private_as = neighbor_map.get('remove_private_as')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
-        # self.created =  neighbor_map.get('created')
-        self.virtual_interface = vi_model.get_by_pk(
-            neighbor_map.get('virtual_interface')
-        )
+        self.virtual_interface = neighbor_map.get('virtual_interface')
 
         self.save()
 
     def update_v4(self, neighbor_map):
         """Update Neighbor."""
-
-        vi_model = get_model('api_virtual_interface', 'VirtualInterface')
 
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')
@@ -162,10 +156,7 @@ class Neighbor(BaseModel):
         self.remove_private_as = neighbor_map.get('remove_private_as')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
-        # self.created =  neighbor_map.get('created')
-        self.virtual_interface = vi_model.get_by_pk(
-            neighbor_map.get('virtual_interface')
-        )
+        self.virtual_interface = neighbor_map.get('virtual_interface')
 
         self.save()
 

@@ -300,16 +300,6 @@ class IpCantRemoveFromServerPool(IpError):
         IpError.__init__(self, cause, message)
 
 
-class VirtualInterfaceIsNotNoneAtIpEquip(IpError):
-
-    """Returns exceptions when trying to dissociate Ip, Equipment and
-        Virtual Interface.
-    """
-
-    def __init__(self, cause, message=None):
-        IpError.__init__(self, cause, message)
-
-
 class NetworkIPv4(BaseModel):
 
     id = models.AutoField(
@@ -1203,12 +1193,12 @@ class Ip(BaseModel):
 
     equipments = property(_get_equipments)
 
-    def _get_ipv4_equipment_virtual_interface(self):
+    def _get_ipv4_equipment(self):
 
         return self.ipequipamento_set.all()
 
-    ipv4_equipment_virtual_interface = \
-        property(_get_ipv4_equipment_virtual_interface)
+    ipv4_equipment = \
+        property(_get_ipv4_equipment)
 
     def _get_vips(self):
         """Returns vips list."""
@@ -2161,8 +2151,6 @@ class Ip(BaseModel):
         """Method V4 to create Ip."""
 
         models = get_app('equipamento', 'models')
-        virtual_interface = get_model('api_virtual_interface',
-                                      'VirtualInterface')
 
         try:
             self.networkipv4 = NetworkIPv4() \
@@ -2181,10 +2169,6 @@ class Ip(BaseModel):
             # Get objects of equipments
             eqpts = models.Equipamento.objects.filter(
                 id__in=[eqpt.get('equipment').get('id')
-                        for eqpt in ip_map.get('equipments', [])])
-
-            virtual_interfaces = virtual_interface.objects.filter(
-                id__in=[eqpt.get('virtual_interface', {}).get('id')
                         for eqpt in ip_map.get('equipments', [])])
 
         except Exception, e:
@@ -2211,12 +2195,6 @@ class Ip(BaseModel):
                     lock_name = LOCK_ENVIRONMENT_ALLOCATES % env.ambiente_id
                     if lock_name not in locks_used:
                         locks_name.append(lock_name)
-
-            for virtual_interface in virtual_interfaces:
-                # Prepare locks for Virtual Interfaces
-                lock_name = LOCK_VINTERFACE % virtual_interface
-                if lock_name not in locks_used:
-                    locks_name.append(lock_name)
 
             # Create Locks
             locks_name = list(set(locks_name))
@@ -2270,7 +2248,6 @@ class Ip(BaseModel):
                 ip_equipment.create_v4({
                     'ip': self.id,
                     'equipment': eqpt.get('equipment').get('id'),
-                    'interface': eqpt.get('virtual_interface', {}).get('id')
                 })
 
         except IpErrorV3, e:
@@ -2294,28 +2271,18 @@ class Ip(BaseModel):
         """Method V4 to update Ip."""
 
         models = get_app('equipamento', 'models')
-        virtual_interface = get_model('api_virtual_interface',
-                                      'VirtualInterface')
 
         try:
             self.descricao = ip_map.get('description')
 
             # Get environments related
-            envs = self.networkipv4.vlan.get_environment_related(
-                use_vrf=True) \
+            envs = self.networkipv4.vlan.get_environment_related(use_vrf=True) \
                 .values_list('id', flat=True)
 
             # Get objects of equipments
-            eqpts = models.Equipamento.objects.filter(
-                id__in=[eqpt.get('equipment').get('id')
-                        for eqpt in ip_map.get('equipments', [])]
+            eqpts = models.Equipamento.objects.filter(id__in=[
+                eqpt.get('id') for eqpt in ip_map.get('equipments', [])]
             )
-
-            # Get objects of virtual interfaces
-            virtual_interfaces = virtual_interface.objects.filter(
-                id__in=[eqpt.get('virtual_interface', {}).get('id')
-                        for eqpt in ip_map.get('equipments', [])])
-
         except Exception, e:
             raise IpErrorV3(e)
 
@@ -2346,12 +2313,6 @@ class Ip(BaseModel):
                     if lock_name not in locks_used:
                         locks_name.append(lock_name)
 
-            for virtual_interface in virtual_interfaces:
-                # Prepare locks for Virtual Interfaces
-                lock_name = LOCK_VINTERFACE % virtual_interface
-                if lock_name not in locks_used:
-                    locks_name.append(lock_name)
-
             # Create Locks
             locks_name = list(set(locks_name))
             locks_list = create_lock_with_blocking(locks_name)
@@ -2367,19 +2328,13 @@ class Ip(BaseModel):
                 .values_list('equipamento', flat=True)
 
             # Creates new associate
-            for eqpt in ip_map.get('equipments', []):
-                eqpt_id = eqpt.get('equipment').get('id')
-                id_interface = eqpt.get('virtual_interface', {}).get('id')
-                ip_equipment = IpEquipamento()
-                if eqpt_id not in current:
+            for eqpt in eqpts:
+                if eqpt.id not in current:
+                    ip_equipment = IpEquipamento()
                     ip_equipment.create_v4({
                         'ip': self.id,
-                        'equipment': eqpt_id,
-                        'interface': id_interface
+                        'equipment': eqpt.id
                     })
-                else:
-                    ip_equipment.get_by_ip_equipment(self.id, eqpt_id). \
-                        update_v4(id_interface)
 
             # Removes old associates
             for ip_eqpt in self.ipequipamento_set \
@@ -2542,12 +2497,6 @@ class IpEquipamento(BaseModel):
     equipamento = models.ForeignKey(
         'equipamento.Equipamento',
         db_column='id_equip'
-    )
-
-    virtual_interface = models.ForeignKey(
-        'api_virtual_interface.VirtualInterface',
-        db_column='id_virtual_interface',
-        null=True
     )
 
     log = logging.getLogger('IpEquipamento')
@@ -2803,15 +2752,6 @@ class IpEquipamento(BaseModel):
 
         type_eqpt = tipoequipamento.get_tipo_balanceador()
 
-        if self.virtual_interface is not None:
-            raise VirtualInterfaceIsNotNoneAtIpEquip(
-                'Cannot delete IpEquipment relationship because '
-                'Virtual Interface %s is related with Equipment %s '
-                'and Ip %s.' % (self.virtual_interface.id,
-                               self.equipamento.id,
-                               self.ip.id)
-            )
-
         if self.equipamento.tipo_equipamento == type_eqpt:
 
             for vip in self.ip.viprequest_set.all():
@@ -2891,17 +2831,10 @@ class IpEquipamento(BaseModel):
         equipamentoambiente = get_model('equipamento',
                                         'EquipamentoAmbiente')
         equipamento = get_model('equipamento', 'Equipamento')
-        virtualinterface = get_model('api_virtual_interface',
-                                     'VirtualInterface')
-
-        interface = ip_equipment.get('interface')
 
         self.equipamento = equipamento().get_by_pk(
             ip_equipment.get('equipment'))
         self.ip = Ip().get_by_pk(ip_equipment.get('ip'))
-
-        if interface is not None:
-            self.virtual_interface = virtualinterface().get_by_pk(interface)
 
         # Validate the ip
         self.__validate_ip()
@@ -2923,32 +2856,6 @@ class IpEquipamento(BaseModel):
             self.log.error(u'Failure to insert an ip_equipamento.')
             raise IpError(e, u'Failure to insert an ip_equipamento.')
 
-    def update_v4(self, interface):
-        """Changes only VirtualInterface foreign key."""
-
-        try:
-
-            virtualinterface = get_model('api_virtual_interface',
-                                         'VirtualInterface')
-
-            if self.virtual_interface is None and interface is not None:
-                # Only allowed if in the already existing relationship between
-                # Ip and equipment, the virtual interface is null
-                self.virtual_interface = virtualinterface.get_by_pk(interface)
-            else:
-                # If in the already existing relationship between Ip and Equip-
-                # ment the virtual interface is not Null, it cannot be changed
-                # to other Virtual Interface. What can be done is delete the
-                # Virtual Interface and in this process set all foreign keys
-                # in IpEquipment relationships to None
-                self.virtual_interface = None
-
-            self.save()
-
-        except Exception, e:
-            self.log.error(u'Failure to edit an ip_equipamento.')
-            raise IpError(e, u'Failure to edit an ip_equipamento.')
-
     def delete_v4(self, bypass_ip=False):
         """
         Method V4 to remove Ip and Equipment relationship.
@@ -2967,15 +2874,6 @@ class IpEquipamento(BaseModel):
         tipoequipamento = get_model('equipamento', 'TipoEquipamento')
 
         type_eqpt = tipoequipamento.get_tipo_balanceador()
-
-        if self.virtual_interface is not None:
-            raise VirtualInterfaceIsNotNoneAtIpEquip(
-                'Cannot delete IpEquipment relationship because '
-                'Virtual Interface %s is related with Equipment %s '
-                'and Ip %s.' % (self.virtual_interface.id,
-                               self.equipamento.id,
-                               self.ip.id)
-            )
 
         if self.equipamento.tipo_equipamento == type_eqpt:
 
@@ -4039,12 +3937,12 @@ class Ipv6(BaseModel):
 
     equipments = property(_get_equipments)
 
-    def _get_ipv6_equipment_virtual_interface(self):
+    def _get_ipv6_equipment(self):
 
         return self.ipv6equipament_set.all()
 
-    ipv6_equipment_virtual_interface = \
-        property(_get_ipv6_equipment_virtual_interface)
+    ipv6_equipment = \
+        property(_get_ipv6_equipment)
 
     def _get_vips(self):
         """Returns vips list."""
@@ -5051,8 +4949,6 @@ class Ipv6(BaseModel):
         """Method V4 to create Ipv6."""
 
         models = get_app('equipamento', 'models')
-        virtual_interface = get_model('api_virtual_interface',
-                                      'VirtualInterface')
 
         try:
 
@@ -5078,9 +4974,6 @@ class Ipv6(BaseModel):
                 id__in=[eqpt.get('equipment').get('id')
                         for eqpt in ip_map.get('equipments', [])])
 
-            virtual_interfaces = virtual_interface.objects.filter(
-                id__in=[eqpt.get('virtual_interface', {}).get('id')
-                    for eqpt in ip_map.get('equipments', [])])
         except Exception, e:
             raise IpErrorV3(e)
 
@@ -5105,12 +4998,6 @@ class Ipv6(BaseModel):
                     lock_name = LOCK_ENVIRONMENT_ALLOCATES % env.ambiente_id
                     if lock_name not in locks_used:
                         locks_name.append(lock_name)
-
-            for virtual_interface in virtual_interfaces:
-                # Prepare locks for Virtual Interfaces
-                lock_name = LOCK_VINTERFACE % virtual_interface
-                if lock_name not in locks_used:
-                    locks_name.append(lock_name)
 
             # Create Locks
             locks_name = list(set(locks_name))
@@ -5168,7 +5055,6 @@ class Ipv6(BaseModel):
                 ip_equipment.create_v4({
                     'ip': self.id,
                     'equipment': eqpt.get('equipment').get('id'),
-                    'interface': eqpt.get('virtual_interface', {}).get('id')
                 })
 
         except IpErrorV3, e:
@@ -5192,28 +5078,18 @@ class Ipv6(BaseModel):
         """Method V4 to update Ipv6."""
 
         models = get_app('equipamento', 'models')
-        virtual_interface = get_model('api_virtual_interface',
-                                      'VirtualInterface')
 
         try:
             self.descricao = ip_map.get('description')
 
             # Get environments related
-            envs = self.networkipv6.vlan.get_environment_related(
-                use_vrf=True) \
+            envs = self.networkipv6.vlan.get_environment_related(use_vrf=True) \
                 .values_list('id', flat=True)
 
             # Get objects of equipments
-            eqpts = models.Equipamento.objects.filter(
-                id__in=[eqpt.get('equipment').get('id')
-                        for eqpt in ip_map.get('equipments', [])]
+            eqpts = models.Equipamento.objects.filter(id__in=[
+                eqpt.get('id') for eqpt in ip_map.get('equipments', [])]
             )
-
-            # Get objects of virtual interfaces
-            virtual_interfaces = virtual_interface.objects.filter(
-                id__in=[eqpt.get('virtual_interface', {}).get('id')
-                        for eqpt in ip_map.get('equipments', [])])
-
         except Exception, e:
             raise IpErrorV3(e)
 
@@ -5244,12 +5120,6 @@ class Ipv6(BaseModel):
                     if lock_name not in locks_used:
                         locks_name.append(lock_name)
 
-            for virtual_interface in virtual_interfaces:
-                # Prepare locks for Virtual Interfaces
-                lock_name = LOCK_VINTERFACE % virtual_interface
-                if lock_name not in locks_used:
-                    locks_name.append(lock_name)
-
             # Create Locks
             locks_name = list(set(locks_name))
             locks_list = create_lock_with_blocking(locks_name)
@@ -5265,19 +5135,13 @@ class Ipv6(BaseModel):
                 .values_list('equipamento', flat=True)
 
             # Creates new associate
-            for eqpt in ip_map.get('equipments', []):
-                eqpt_id = eqpt.get('equipment').get('id')
-                id_interface = eqpt.get('virtual_interface', {}).get('id')
-                ip_equipment = Ipv6Equipament()
-                if eqpt_id not in current:
+            for eqpt in eqpts:
+                if eqpt.id not in current:
+                    ip_equipment = Ipv6Equipament()
                     ip_equipment.create_v4({
                         'ip': self.id,
-                        'equipment': eqpt_id,
-                        'interface': id_interface
+                        'equipment': eqpt.id
                     })
-                else:
-                    ip_equipment.get_by_ip_equipment(self.id, eqpt_id). \
-                        update_v4(id_interface)
 
             # Removes old associates
             for ip_eqpt in self.ipv6equipament_set \
@@ -5441,11 +5305,6 @@ class Ipv6Equipament(BaseModel):
     equipamento = models.ForeignKey(
         'equipamento.Equipamento',
         db_column='id_equip'
-    )
-    virtual_interface = models.ForeignKey(
-        'api_virtual_interface.VirtualInterface',
-        db_column='id_virtual_interface',
-        null=True
     )
 
     log = logging.getLogger('Ipv6Equipament')
@@ -5721,15 +5580,6 @@ class Ipv6Equipament(BaseModel):
 
         type_eqpt = tipoequipamento.get_tipo_balanceador()
 
-        if self.virtual_interface is not None:
-            raise VirtualInterfaceIsNotNoneAtIpEquip(
-                'Cannot delete IpEquipment relationship because '
-                'Virtual Interface %s is related with Equipment %s '
-                'and Ipv6 %s.' % (self.virtual_interface.id,
-                                self.equipamento.id,
-                                self.ip.id)
-            )
-
         if self.equipamento.tipo_equipamento == type_eqpt:
 
             for vip in self.ip.viprequest_set.all():
@@ -5809,17 +5659,10 @@ class Ipv6Equipament(BaseModel):
         equipamento = get_model('equipamento', 'Equipamento')
         equipamentoambiente = get_model('equipamento',
                                         'EquipamentoAmbiente')
-        virtualinterface = get_model('api_virtual_interface',
-                                     'VirtualInterface')
-
-        interface = ip_equipment.get('interface')
 
         self.equipamento = equipamento().get_by_pk(
             ip_equipment.get('equipment'))
         self.ip = Ipv6().get_by_pk(ip_equipment.get('ip'))
-
-        if interface is not None:
-            self.virtual_interface = virtualinterface().get_by_pk(interface)
 
         # Validate the ip
         self.validate_ip()
@@ -5843,32 +5686,6 @@ class Ipv6Equipament(BaseModel):
             self.log.error(u'Failure to insert an ip_equipamento.')
             raise IpError(e, u'Failure to insert an ip_equipamento.')
 
-    def update_v4(self, interface):
-        """Changes only VirtualInterface foreign key."""
-
-        try:
-
-            virtualinterface = get_model('api_virtual_interface',
-                                         'VirtualInterface')
-
-            if self.virtual_interface is None and interface is not None:
-                # Only allowed if in the already existing relationship between
-                # Ip and equipment, the virtual interface is null
-                self.virtual_interface = virtualinterface.get_by_pk(interface)
-            else:
-                # If in the already existing relationship between Ip and Equip-
-                # ment the virtual interface is not Null, it cannot be changed
-                # to other Virtual Interface. What can be done is delete the
-                # Virtual Interface and in this process set all foreign keys
-                # in IpEquipment relationships to None
-                self.virtual_interface = None
-
-            self.save()
-
-        except Exception, e:
-            self.log.error(u'Failure to edit an ip_equipamento.')
-            raise IpError(e, u'Failure to edit an ip_equipamento.')
-
     def delete_v4(self, bypass_ip=False):
         """
         Method V4 to remove Ipv6 and Equipment relationship.
@@ -5887,15 +5704,6 @@ class Ipv6Equipament(BaseModel):
         tipoequipamento = get_model('equipamento', 'TipoEquipamento')
 
         type_eqpt = tipoequipamento.get_tipo_balanceador()
-
-        if self.virtual_interface is not None:
-            raise VirtualInterfaceIsNotNoneAtIpEquip(
-                'Cannot delete IpEquipment relationship because '
-                'Virtual Interface %s is related with Equipment %s '
-                'and Ipv6 %s.' % (self.virtual_interface.id,
-                                self.equipamento.id,
-                                self.ip.id)
-            )
 
         if self.equipamento.tipo_equipamento == type_eqpt:
 

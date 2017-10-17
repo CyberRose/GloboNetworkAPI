@@ -4,12 +4,10 @@
       "equipment_type": 1,
       "ipsv4": [
         {
-          "ip": 1,
-          "virtual_interface": null
+          "ip": 1
         },
         {
-          "ip": 2,
-          "virtual_interface": null
+          "ip": 2
         }
       ],
       "maintenance": false,

@@ -53,17 +53,6 @@
                   "required": [
                     "id"
                   ]
-                },
-                "virtual_interface": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
                 }
               }
             }
@@ -74,17 +63,6 @@
               "type": "object",
               "properties": {
                 "ipv6": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
-                },
-                "virtual_interface": {
                   "type": "object",
                   "properties": {
                     "id": {

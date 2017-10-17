@@ -51,12 +51,11 @@
             "type": "boolean"
           },
           "virtual_interface": {
-            "type": "integer"
+            "type": "string"
           }
         },
         "required": [
-          "id",
-          "virtual_interface"
+          "id"
         ]
       }
     }

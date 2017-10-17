@@ -8,9 +8,6 @@ from networkapi.infrastructure.ipaddr import IPAddress
 
 from networkapi.api_vrf.models import Vrf
 from networkapi.api_as.models import As
-from networkapi.api_virtual_interface.models import VirtualInterface
-from networkapi.api_virtual_interface.v4.serializers import \
-    VirtualInterfaceV4Serializer
 from networkapi.api_neighbor.models import Neighbor
 from networkapi.api_neighbor.v4 import exceptions
 from networkapi.api_neighbor.v4.exceptions import NeighborErrorV4
@@ -131,14 +128,16 @@ def delete_neighbor(neighbor_ids):
 
 def get_equipment(id_, remote_ip):
 
-    version_ip = IPAddress(remote_ip).version
-
-    if version_ip == 4:
-        return Equipamento.objects.get(
-            ipequipamento__virtual_interface__neighbor=id_)
-    else:
-        return Equipamento.objects.get(
-            ipv6equipament__virtual_interface__neighbor=id_)
+    pass
+    # TODO: Refactor it
+    # version_ip = IPAddress(remote_ip).version
+    #
+    # if version_ip == 4:
+    #     return Equipamento.objects.get(
+    #         ipequipamento__virtual_interface__neighbor=id_)
+    # else:
+    #     return Equipamento.objects.get(
+    #         ipv6equipament__virtual_interface__neighbor=id_)
 
 
 @commit_on_success
@@ -153,23 +152,19 @@ def deploy_neighbors(neighbors):
 
         remote_ip = neighbor['remote_ip']
         try:
-
+            # TODO BGP Refactor
             equipment = get_equipment(id_, remote_ip)
 
             plugin = PluginFactory.factory(equipment)
 
-            asn = As.objects.get(asequipment__equipment=equipment.id)
-            vrf = Vrf.objects.get(virtualinterface__id=
-                                     neighbor['virtual_interface'])
-            virtual_interface = VirtualInterface.get_by_pk(
-                neighbor['virtual_interface'])
-
-            asn = AsV4Serializer(asn).data
-            vrf = VrfV3Serializer(vrf).data
-            virtual_interface = VirtualInterfaceV4Serializer(
-                virtual_interface).data
-
-            plugin.bgp(neighbor, virtual_interface, asn, vrf).deploy_neighbor()
+            # asn = As.objects.get(asequipment__equipment=equipment.id)
+            # vrf = Vrf.objects.get(virtualinterface__id=
+            #                          neighbor['virtual_interface'])
+            #
+            # asn = AsV4Serializer(asn).data
+            # vrf = VrfV3Serializer(vrf).data
+            #
+            # plugin.bgp(neighbor, virtual_interface, asn, vrf).deploy_neighbor()
 
         except Exception as e:
             raise NetworkAPIException(e.message)
@@ -192,24 +187,24 @@ def undeploy_neighbors(neighbors):
 
         remote_ip = neighbor['remote_ip']
         try:
-
+            # TODO BGP Refactor
             equipment = get_equipment(id_, remote_ip)
 
             plugin = PluginFactory.factory(equipment)
 
-            asn = As.objects.get(asequipment__equipment=equipment.id)
-            vrf = Vrf.objects.get(virtualinterface__id=
-                                     neighbor['virtual_interface'])
-            virtual_interface = VirtualInterface.get_by_pk(
-                neighbor['virtual_interface'])
-
-            asn = AsV4Serializer(asn).data
-            vrf = VrfV3Serializer(vrf).data
-            virtual_interface = VirtualInterfaceV4Serializer(
-                virtual_interface).data
-
-            plugin.bgp(neighbor, virtual_interface, asn, vrf).\
-                undeploy_neighbor()
+            # asn = As.objects.get(asequipment__equipment=equipment.id)
+            # vrf = Vrf.objects.get(virtualinterface__id=
+            #                          neighbor['virtual_interface'])
+            # virtual_interface = VirtualInterface.get_by_pk(
+            #     neighbor['virtual_interface'])
+            #
+            # asn = AsV4Serializer(asn).data
+            # vrf = VrfV3Serializer(vrf).data
+            # virtual_interface = VirtualInterfaceV4Serializer(
+            #     virtual_interface).data
+            #
+            # plugin.bgp(neighbor, virtual_interface, asn, vrf).\
+            #     undeploy_neighbor()
 
         except Exception as e:
             raise NetworkAPIException(e.message)

@@ -22,9 +22,6 @@ class NeighborV4Serializer(DynamicFieldsModelSerializer):
 
     created = serializers.Field(source='created')
 
-    virtual_interface = serializers.SerializerMethodField(
-        'get_virtual_interface')
-
     class Meta:
         Neighbor = get_model('api_neighbor', 'Neighbor')
         model = Neighbor
@@ -52,42 +49,3 @@ class NeighborV4Serializer(DynamicFieldsModelSerializer):
 
         details_fields = fields
 
-    def get_virtual_interface(self, obj):
-        return self.extends_serializer(obj, 'virtual_interface')
-
-    def get_serializers(self):
-        # serializers
-        vi_slz = get_app('api_virtual_interface',
-                          module_label='v4.serializers')
-
-        if not self.mapping:
-            self.mapping = {
-                'virtual_interface': {
-                    'obj': 'virtual_interface_id'
-                },
-                'virtual_interface__details': {
-                    'serializer': vi_slz.VirtualInterfaceV4Serializer,
-                    'kwargs': {
-                        'kind': 'details'
-                    },
-                    'obj': 'virtual_interface',
-                    'eager_loading': self.setup_eager_loading_interface
-                },
-                'virtual_interface__basic': {
-                    'serializer': vi_slz.VirtualInterfaceV4Serializer,
-                    'kwargs': {
-                        'kind': 'basic'
-                    },
-                    'obj': 'virtual_interface',
-                    'eager_loading': self.setup_eager_loading_interface
-                },
-            }
-
-    @staticmethod
-    def setup_eager_loading_interface(queryset):
-
-        log.info('Using setup_eager_loading_interface')
-        queryset = queryset.select_related(
-            'virtual_interface',
-        )
-        return queryset

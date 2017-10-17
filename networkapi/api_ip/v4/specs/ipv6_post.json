@@ -56,17 +56,6 @@
                   "required": [
                     "id"
                   ]
-                },
-                "virtual_interface": {
-                  "type": "object",
-                  "properties": {
-                    "id": {
-                      "type": "integer"
-                    }
-                  },
-                  "required": [
-                    "id"
-                  ]
                 }
               }
             }

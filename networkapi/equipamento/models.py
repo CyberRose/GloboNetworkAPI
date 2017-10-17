@@ -504,19 +504,19 @@ class Equipamento(BaseModel):
 
     environments = property(_get_environments)
 
-    def _get_ipv4_equipment_virtual_interface(self):
+    def _get_ipv4_equipment(self):
 
         return self.ipequipamento_set.all()
 
-    ipv4_equipment_virtual_interface = \
-        property(_get_ipv4_equipment_virtual_interface)
+    ipv4_equipment = \
+        property(_get_ipv4_equipment)
 
-    def _get_ipv6_equipment_virtual_interface(self):
+    def _get_ipv6_equipment(self):
 
         return self.ipv6equipament_set.all()
 
-    ipv6_equipment_virtual_interface = \
-        property(_get_ipv6_equipment_virtual_interface)
+    ipv6_equipment = \
+        property(_get_ipv6_equipment)
 
     def _get_ipv4(self):
         ips = self.ipequipamento_set.all()
@@ -531,22 +531,6 @@ class Equipamento(BaseModel):
         return ips
 
     ipv6 = property(_get_ipv6)
-
-    def _get_id_as(self):
-        as_bgp = self.asequipment_set.all()
-        if as_bgp:
-            return as_bgp[0].id_as
-        return None
-
-    id_as = property(_get_id_as)
-
-    def _get_id_as_id(self):
-        as_bgp = self.asequipment_set.all()
-        if as_bgp:
-            return as_bgp[0].id_as.id
-        return None
-
-    id_as_id = property(_get_id_as_id)
 
     @classmethod
     def get_next_name_by_prefix(cls, prefix):
@@ -1063,8 +1047,7 @@ class Equipamento(BaseModel):
             for ipv4 in equipment.get('ipsv4', []):
                 ipeqpt_model().create_v4({
                     'equipment': self.id,
-                    'ip': ipv4['ipv4']['id'],
-                    'interface': ipv4.get('virtual_interface', {}).get('id')
+                    'ip': ipv4['ipv4']['id']
                 })
 
             # ipv6s
@@ -1072,8 +1055,7 @@ class Equipamento(BaseModel):
             for ipv6 in equipment.get('ipsv6', []):
                 ipeqpt_model().create_v4({
                     'equipment': self.id,
-                    'ip': ipv6['ipv6']['id'],
-                    'interface': ipv6.get('virtual_interface', {}).get('id')
+                    'ip': ipv6['ipv6']['id']
                 })
 
             # as
@@ -1167,71 +1149,42 @@ class Equipamento(BaseModel):
                 env_db.filter(ambiente__in=env_db_ids_old).delete()
 
             # ipv4s
-            # TODO Update relationship where virtual interface is null
-            if equipment.get('ipsv4'):
+            if equipment.get('ipv4'):
                 ipeqpt_model = get_model('ip', 'IpEquipamento')
                 ips_db = ipeqpt_model.list_by_equip(self.id)
                 ips_db_ids = ips_db.values_list('ip', flat=True)
-                ipv4_ids = equipment.get('ipsv4')
+                ipv4_ids = equipment.get('ipv4')
 
                 for ipv4 in ipv4_ids:
                     # insert new relashionship with ipv4
-                    ipv4_id = ipv4['ipv4']['id']
-                    id_interface = ipv4.get('virtual_interface', {}).get('id')
-                    if ipv4_id not in ips_db_ids:
+                    if ipv4 not in ips_db_ids:
                         ipeqpt_model().create_v4({
                             'equipment': self.id,
-                            'ip': ipv4['ipv4']['id'],
-                            'interface': id_interface
+                            'ip': ipv4
                         })
-                    else:
-                        ipeqpt_model.get_by_ip_equipment(ipv4_id, self.id).\
-                            update_v4(id_interface)
 
                 # delete relashionship with ipv4 not sended
-                ipv4_ids = [ipv4['ipv4']['id'] for ipv4 in ipv4_ids]
                 ips_db_ids_old = list(set(ips_db_ids) - set(ipv4_ids))
                 ips_db.filter(ip__in=ips_db_ids_old).delete()
 
             # ipv6s
-            if equipment.get('ipsv6'):
+            if equipment.get('ipv6'):
                 ipeqpt_model = get_model('ip', 'Ipv6Equipament')
                 ipv6s_db = ipeqpt_model.list_by_equip(self.id)
                 ipv6s_db_ids = ipv6s_db.values_list('ip', flat=True)
-                ipv6_ids = equipment.get('ipsv6')
+                ipv6_ids = equipment.get('ipv6')
 
                 for ipv6 in ipv6_ids:
                     # insert new relashionship with ipv6
-                    ipv6_id = ipv6['ipv6']['id']
-                    id_interface = ipv6.get('virtual_interface', {}).get('id')
-                    if ipv6_id not in ipv6s_db_ids:
+                    if ipv6 not in ipv6s_db_ids:
                         ipeqpt_model().create_v4({
                             'equipment': self.id,
-                            'ip': ipv6['ipv6']['id'],
-                            'interface': id_interface
+                            'ip': ipv6
                         })
-                    else:
-                        ipeqpt_model.get_by_ip_equipment(ipv6_id, self.id).\
-                            update_v4(id_interface)
 
                 # delete relashionship with ipv6 not sended
-                ipv6_ids = [ipv6['ipv6']['id'] for ipv6 in ipv6_ids]
                 ipv6s_db_ids_old = list(set(ipv6s_db_ids) - set(ipv6_ids))
                 ipv6s_db.filter(ip__in=ipv6s_db_ids_old).delete()
-
-            # as
-            if equipment.get('id_as'):
-                aseqpt_model = get_model('api_as', 'AsEquipment')
-
-                # delete old AsEquipment association
-                for aseqpt in self.asequipment_set.all():
-                    aseqpt.delete()
-
-                # create new AsEquipment association
-                aseqpt_model().create_v4({
-                    'equipment': self.id,
-                    'id_as': equipment.get('id_as')
-                })
 
         except EquipmentInvalidValueException, e:
             raise EquipmentInvalidValueException(e.detail)
@@ -1239,8 +1192,6 @@ class Equipamento(BaseModel):
             raise EquipmentInvalidValueException(e.message)
         except EGrupoNotFoundError, e:
             raise EquipmentInvalidValueException(e.message)
-        except AsNotFoundError, e:
-            raise EquipmentInvalidValueException(e.detail)
         except Exception, e:
             raise EquipamentoError(None, e)
 
