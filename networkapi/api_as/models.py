@@ -28,10 +28,10 @@ class As(BaseModel):
         max_length=200
     )
 
-    def _get_equipments(self):
-        return self.asequipment_set.all()
+    def _get_as_ip_equipment(self):
+        return self.asipequipment_set.all()
 
-    equipments = property(_get_equipments)
+    as_ip_equipment = property(_get_as_ip_equipment)
 
     log = logging.getLogger('As')
 
@@ -118,6 +118,8 @@ class AsIpEquipment(BaseModel):
         db_column='id_ipv6_eqpt',
         null=True
     )
+
+    log = logging.getLogger('AsIpEquipment')
 
     class Meta(BaseModel.Meta):
         db_table = u'as_ip_equipment'
