@@ -23,6 +23,12 @@ class Neighbor(BaseModel):
         db_column='id'
     )
 
+    as_ip_equipment = models.ForeignKey(
+        'api_as.AsIpEquipment',
+        db_column='id_as_ip_equipment',
+        null=True
+    )
+
     remote_as = models.CharField(
         blank=False,
         max_length=45,

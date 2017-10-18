@@ -109,3 +109,44 @@ class As(BaseModel):
         except Exception, e:
             self.log.error(e)
             raise exceptions.AsErrorV4(e)
+
+class AsIpEquipment(BaseModel):
+
+    id = models.AutoField(
+        primary_key=True,
+        db_column='id'
+    )
+
+    asn = models.ForeignKey(
+        'api_as.As',
+        db_column='id_as',
+        null=False
+    )
+
+    ipv4_equipment = models.ForeignKey(
+        'ip.IpEquipamento',
+        db_column='id_ipv4_eqpt',
+        null=True
+    )
+
+    ipv6_equipment = models.ForeignKey(
+        'ip.Ipv6Equipament',
+        db_column='id_ipv6_eqpt',
+        null=True
+    )
+
+    class Meta(BaseModel.Meta):
+        db_table = u'as_ip_equipment'
+        managed = True
+
+    def create_v4(self):
+
+        pass
+
+    def update_v4(self):
+
+        pass
+
+    def delete_v4(self):
+
+        pass
