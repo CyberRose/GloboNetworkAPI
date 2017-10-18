@@ -95,16 +95,14 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'tipo_equipamento'
                 },
                 'ipsv4': {
-                    'serializer': v4_ip_slz. \
-                        IPv4EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv4EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                     },
                     'obj': 'ipv4_equipment'
                 },
                 'ipsv4__basic': {
-                    'serializer': v4_ip_slz. \
-                        IPv4EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv4EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'basic'
@@ -112,8 +110,7 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'ipv4_equipment',
                 },
                 'ipsv4__details': {
-                    'serializer': v4_ip_slz. \
-                        IPv4EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv4EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'details'
@@ -121,16 +118,14 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'ipv4_equipment',
                 },
                 'ipsv6': {
-                    'serializer': v4_ip_slz. \
-                        IPv6EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv6EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                     },
                     'obj': 'ipv6_equipment'
                 },
                 'ipsv6__basic': {
-                    'serializer': v4_ip_slz. \
-                        IPv6EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv6EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'basic'
@@ -138,8 +133,7 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'ipv6_equipment',
                 },
                 'ipsv6__details': {
-                    'serializer': v4_ip_slz. \
-                        IPv6EquipmentV4Serializer,
+                    'serializer': v4_ip_slz.IPv6EquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'details'
@@ -164,8 +158,7 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'groups'
                 },
                 'environments': {
-                    'serializer': eqptv3_slzs.\
-                        EquipmentEnvironmentV3Serializer,
+                    'serializer': eqptv3_slzs.EquipmentEnvironmentV3Serializer,
                     'kwargs': {
                         'many': True,
                         'fields': (
@@ -177,8 +170,7 @@ class EquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'environments'
                 },
                 'environments__details': {
-                    'serializer': eqptv3_slzs.\
-                        EquipmentEnvironmentV3Serializer,
+                    'serializer': eqptv3_slzs.EquipmentEnvironmentV3Serializer,
                     'kwargs': {
                         'many': True,
                         'fields': (

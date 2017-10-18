@@ -43,16 +43,3 @@ class AsDoesNotExistException(APIException):
     status_code = status.HTTP_404_NOT_FOUND
     default_detail = 'AS doesn not exists.'
 
-
-class AsEquipmentNotFoundError(APIException):
-    status_code = status.HTTP_404_NOT_FOUND
-
-    def __init__(self, msg):
-        self.detail = u'AS %s do not exist.' % (msg)
-
-
-class AsEquipmentError(APIException):
-    status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    def __init__(self, msg):
-        self.detail = msg

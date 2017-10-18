@@ -1001,9 +1001,6 @@ class Equipamento(BaseModel):
         for equipment_group in self.equipamentogrupo_set.all():
             equipment_group.delete()
 
-        for as_equipment in self.asequipment_set.all():
-            as_equipment.delete()
-
         self.delete()
 
     def create_v4(self, equipment):
@@ -1056,14 +1053,6 @@ class Equipamento(BaseModel):
                 ipeqpt_model().create_v4({
                     'equipment': self.id,
                     'ip': ipv6['ipv6']['id']
-                })
-
-            # as
-            aseqpt_model = get_model('api_as', 'AsEquipment')
-            if equipment.get('id_as'):
-                aseqpt_model().create_v4({
-                    'equipment': self.id,
-                    'id_as': equipment.get('id_as')
                 })
 
         except EquipmentInvalidValueException, e:
