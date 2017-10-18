@@ -1,7 +1,7 @@
 #-*- coding:utf-8 -*-
 SQL_UP = u"""
 
-CREATE TABLE IF NOT EXISTS `as_ip_eqpt` (
+CREATE TABLE IF NOT EXISTS `as_ip_equipment` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
   `id_as` INT UNSIGNED NOT NULL COMMENT '',
   `id_ipv4_eqpt` INT UNSIGNED NULL COMMENT '',
