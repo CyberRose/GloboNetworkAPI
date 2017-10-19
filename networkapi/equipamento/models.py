@@ -1061,8 +1061,6 @@ class Equipamento(BaseModel):
             raise EquipmentInvalidValueException(e.message)
         except EGrupoNotFoundError, e:
             raise EquipmentInvalidValueException(e.message)
-        except AsNotFoundError, e:
-            raise EquipmentInvalidValueException(e.detail)
         except Exception, e:
             raise EquipamentoError(None, e)
 

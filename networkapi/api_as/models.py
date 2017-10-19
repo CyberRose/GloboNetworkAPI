@@ -4,7 +4,6 @@ import logging
 from _mysql_exceptions import OperationalError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
-from django.db.models import get_model
 
 from networkapi.api_as.v4 import exceptions
 from networkapi.models.BaseModel import BaseModel

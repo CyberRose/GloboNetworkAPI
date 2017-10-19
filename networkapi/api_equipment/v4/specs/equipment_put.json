@@ -106,9 +106,6 @@
           },
           "name": {
             "type": "string"
-          },
-          "id_as": {
-            "type": "integer"
           }
         },
         "required": [
