@@ -148,7 +148,7 @@ class NeighborUnDeploySuccessTestCase(NetworkApiTestCase):
         pass
 
     @patch('networkapi.api_vrf.models.Vrf.objects.get')
-    @patch('networkapi.api_as.models.As.objects.get')
+    @patch('networkapi.api_asn.models.Asn.objects.get')
     @patch('networkapi.api_virtual_interface.models.VirtualInterface.'
            'objects.get')
     @patch('networkapi.equipamento.models.Equipamento.objects.get')
@@ -183,7 +183,7 @@ class NeighborUnDeploySuccessTestCase(NetworkApiTestCase):
         self.compare_values(False, created)
 
     @patch('networkapi.api_vrf.models.Vrf.objects.get')
-    @patch('networkapi.api_as.models.As.objects.get')
+    @patch('networkapi.api_asn.models.Asn.objects.get')
     @patch('networkapi.api_virtual_interface.models.VirtualInterface.'
            'objects.get')
     @patch('networkapi.equipamento.models.Equipamento.objects.get')

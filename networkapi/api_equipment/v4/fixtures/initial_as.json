@@ -4,7 +4,7 @@
       "name": "AS-1",
       "description": "AS-1"
     },
-    "model": "api_as.as",
+    "model": "api_asn.as",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "name": "AS-2",
       "description": "AS-2"
     },
-    "model": "api_as.as",
+    "model": "api_asn.as",
     "pk": 2
   }
 ]

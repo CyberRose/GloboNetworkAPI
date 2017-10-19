@@ -35,14 +35,14 @@ class AsDeleteSuccessTestCase(NetworkApiTestCase):
         """Success Test of DELETE one AS."""
 
         response = self.client.delete(
-            '/api/v4/as/3/',
+            '/api/v4/asn/3/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
         self.compare_status(200, response.status_code)
 
         response = self.client.get(
-            '/api/v4/as/3/',
+            '/api/v4/asn/3/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -57,7 +57,7 @@ class AsDeleteSuccessTestCase(NetworkApiTestCase):
         """Success Test of DELETE two AS."""
 
         response = self.client.delete(
-            '/api/v4/as/3;4/',
+            '/api/v4/asn/3;4/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -65,7 +65,7 @@ class AsDeleteSuccessTestCase(NetworkApiTestCase):
 
         for id_ in xrange(3, 4+1):
             response = self.client.get(
-                '/api/v4/as/%s/' % id_,
+                '/api/v4/asn/%s/' % id_,
                 HTTP_AUTHORIZATION=self.authorization
             )
 
@@ -104,7 +104,7 @@ class AsDeleteErrorTestCase(NetworkApiTestCase):
     def test_delete_one_as_with_equipments(self):
         """Error Test of DELETE one AS that is related to two Equipments."""
 
-        delete_url = '/api/v4/as/1/'
+        delete_url = '/api/v4/asn/1/'
 
         response = self.client.delete(
             delete_url,
@@ -122,7 +122,7 @@ class AsDeleteErrorTestCase(NetworkApiTestCase):
     def test_delete_one_inexistent_as(self):
         """Error Test of DELETE one inexistent AS."""
 
-        delete_url = '/api/v4/as/1000/'
+        delete_url = '/api/v4/asn/1000/'
 
         response = self.client.delete(
             delete_url,
@@ -141,7 +141,7 @@ class AsDeleteErrorTestCase(NetworkApiTestCase):
             and AS that is not related with Equipments.
         """
 
-        delete_url = '/api/v4/as/1;3/'
+        delete_url = '/api/v4/asn/1;3/'
 
         response = self.client.delete(
             delete_url,
@@ -158,7 +158,7 @@ class AsDeleteErrorTestCase(NetworkApiTestCase):
 
         # Check if AS 3 not changed
         response = self.client.get(
-            '/api/v4/as/3/',
+            '/api/v4/asn/3/',
             HTTP_AUTHORIZATION=self.authorization
         )
 

@@ -39,14 +39,14 @@ class AsPutSuccessTestCase(NetworkApiTestCase):
 
         # Does PUT request
         response = self.client.put(
-            '/api/v4/as/1/',
+            '/api/v4/asn/1/',
             data=json.dumps(self.load_json_file(name_file)),
             content_type='application/json',
             HTTP_AUTHORIZATION=self.authorization)
 
         self.compare_status(200, response.status_code)
 
-        get_url = '/api/v4/as/1/?kind=basic&exclude=equipments'
+        get_url = '/api/v4/asn/1/?kind=basic&exclude=equipments'
 
         name_file_get = json_path % 'get/basic/pk_1_updated.json'
 
@@ -66,14 +66,14 @@ class AsPutSuccessTestCase(NetworkApiTestCase):
 
         # Does PUT request
         response = self.client.put(
-            '/api/v4/as/1;2/',
+            '/api/v4/asn/1;2/',
             data=json.dumps(self.load_json_file(name_file)),
             content_type='application/json',
             HTTP_AUTHORIZATION=self.authorization)
 
         self.compare_status(200, response.status_code)
 
-        get_url = '/api/v4/as/1;2/?kind=basic&exclude=equipments'
+        get_url = '/api/v4/asn/1;2/?kind=basic&exclude=equipments'
 
         name_file_get = json_path % 'get/basic/pk_1;2_updated.json'
 
@@ -117,7 +117,7 @@ class AsPutErrorTestCase(NetworkApiTestCase):
         name_file = json_path % 'put/inexistent_as.json'
 
         response = self.client.put(
-            '/api/v4/as/1000/',
+            '/api/v4/asn/1000/',
             data=json.dumps(self.load_json_file(name_file)),
             content_type='application/json',
             HTTP_AUTHORIZATION=self.authorization)

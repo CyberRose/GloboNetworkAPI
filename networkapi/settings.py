@@ -323,7 +323,7 @@ TEMPLATE_DIRS = (
 # Apps of Project
 PROJECT_APPS = (
     'networkapi.ambiente',
-    'networkapi.api_as',
+    'networkapi.api_asn',
     'networkapi.api_environment',
     'networkapi.api_environment_vip',
     'networkapi.api_equipment',
@@ -523,13 +523,13 @@ SPECS = {
         PROJECT_ROOT_PATH,
         'api_ogp/specs/ogpg_put.json'
     ),
-    'as_post_v4': os.path.join(
+    'asn_post_v4': os.path.join(
         PROJECT_ROOT_PATH,
-        'api_as/v4/specs/as_post.json'
+        'api_asn/v4/specs/asn_post.json'
     ),
-    'as_put_v4': os.path.join(
+    'asn_put_v4': os.path.join(
         PROJECT_ROOT_PATH,
-        'api_as/v4/specs/as_put.json'
+        'api_asn/v4/specs/asn_put.json'
     ),
     'equipment_post_v4': os.path.join(
         PROJECT_ROOT_PATH,

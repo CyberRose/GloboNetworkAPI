@@ -23,8 +23,8 @@ class Neighbor(BaseModel):
         db_column='id'
     )
 
-    as_ip_equipment = models.ForeignKey(
-        'api_as.AsIpEquipment',
+    asn_ip_equipment = models.ForeignKey(
+        'api_asn.AsnIpEquipment',
         db_column='id_as_ip_equipment',
         null=False
     )

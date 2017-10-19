@@ -22,7 +22,7 @@ from django.db.models import get_model
 
 from networkapi.ambiente.models import Ambiente
 from networkapi.ambiente.models import AmbienteNotFoundError
-from networkapi.api_as.v4.exceptions import AsNotFoundError
+from networkapi.api_asn.v4.exceptions import AsnNotFoundError
 from networkapi.api_equipment.exceptions import EquipmentInvalidValueException
 from networkapi.grupo.models import EGrupo
 from networkapi.grupo.models import EGrupoNotFoundError

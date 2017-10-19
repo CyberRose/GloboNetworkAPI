@@ -37,7 +37,7 @@ class AsGetSuccessTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1/',
+            '/api/v4/asn/1/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -52,7 +52,7 @@ class AsGetSuccessTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1;2/',
+            '/api/v4/asn/1;2/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -67,7 +67,7 @@ class AsGetSuccessTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1/?include=equipments',
+            '/api/v4/asn/1/?include=equipments',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -82,7 +82,7 @@ class AsGetSuccessTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1/?include=equipments__details',
+            '/api/v4/asn/1/?include=equipments__details',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -105,7 +105,7 @@ class AsGetSuccessTestCase(NetworkApiTestCase):
             }]
         }
 
-        get_url = prepare_url('/api/v4/as/',
+        get_url = prepare_url('/api/v4/asn/',
                               search=search, kind=['basic'],
                               exclude=['equipments'])
 
@@ -149,7 +149,7 @@ class AsGetErrorTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1000/',
+            '/api/v4/asn/1000/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -165,7 +165,7 @@ class AsGetErrorTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1000;1001/',
+            '/api/v4/asn/1000;1001/',
             HTTP_AUTHORIZATION=self.authorization
         )
 
@@ -181,7 +181,7 @@ class AsGetErrorTestCase(NetworkApiTestCase):
 
         # Make a GET request
         response = self.client.get(
-            '/api/v4/as/1;1000/',
+            '/api/v4/asn/1;1000/',
             HTTP_AUTHORIZATION=self.authorization
         )
 

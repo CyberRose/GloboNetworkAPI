@@ -6,19 +6,19 @@ from networkapi.util.geral import get_app
 from networkapi.util.serializers import DynamicFieldsModelSerializer
 
 
-class AsV4Serializer(DynamicFieldsModelSerializer):
+class AsnV4Serializer(DynamicFieldsModelSerializer):
 
-    as_ip_equipment = serializers.SerializerMethodField('get_as_ip_equipment')
+    asn_ip_equipment = serializers.SerializerMethodField('get_asn_ip_equipment')
 
     class Meta:
-        As_ = get_model('api_as', 'As')
+        As_ = get_model('api_as', 'Asn')
         model = As_
 
         fields = (
             'id',
             'name',
             'description',
-            'as_ip_equipment'
+            'asn_ip_equipment'
         )
 
         basic_fields = (
@@ -31,40 +31,40 @@ class AsV4Serializer(DynamicFieldsModelSerializer):
 
         details_fields = fields
 
-    def get_as_ip_equipment(self, obj):
-        return self.extends_serializer(obj, 'as_ip_equipment')
+    def get_asn_ip_equipment(self, obj):
+        return self.extends_serializer(obj, 'asn_ip_equipment')
 
     def get_serializers(self):
 
         if not self.mapping:
             self.mapping = {
-                'as_ip_equipment': {
-                    'serializer': AsIpEquipmentV4Serializer,
+                'asn_ip_equipment': {
+                    'serializer': AsnIpEquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                     },
-                    'obj': 'as_ip_equipment'
+                    'obj': 'asn_ip_equipment'
                 },
-                'as_ip_equipment__basic': {
-                    'serializer': AsIpEquipmentV4Serializer,
+                'asn_ip_equipment__basic': {
+                    'serializer': AsnIpEquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'basic'
                     },
-                    'obj': 'as_ip_equipment'
+                    'obj': 'asn_ip_equipment'
                 },
-                'as_ip_equipment__details': {
-                    'serializer': AsIpEquipmentV4Serializer,
+                'asn_ip_equipment__details': {
+                    'serializer': AsnIpEquipmentV4Serializer,
                     'kwargs': {
                         'many': True,
                         'kind': 'details'
                     },
-                    'obj': 'as_ip_equipment'
+                    'obj': 'asn_ip_equipment'
                 }
             }
 
 
-class AsIpEquipmentV4Serializer(DynamicFieldsModelSerializer):
+class AsnIpEquipmentV4Serializer(DynamicFieldsModelSerializer):
 
     asn = serializers.SerializerMethodField('get_asn')
     ipv4_equipment = serializers.SerializerMethodField('get_ipv4_equipment')
@@ -72,8 +72,8 @@ class AsIpEquipmentV4Serializer(DynamicFieldsModelSerializer):
 
     class Meta:
 
-        as_ip_equipment = get_model('api_as', 'AsIpEquipment')
-        model = as_ip_equipment
+        asn_ip_equipment = get_model('api_as', 'AsnIpEquipment')
+        model = asn_ip_equipment
 
         fields = (
             'id',
@@ -107,21 +107,21 @@ class AsIpEquipmentV4Serializer(DynamicFieldsModelSerializer):
                     'obj': 'asn_id'
                 },
                 'asn__basic': {
-                    'serializer': AsV4Serializer,
+                    'serializer': AsnV4Serializer,
                     'kwargs': {
                         'kind': 'basic',
                         'prohibited': (
-                            'as_ip_equipment__basic',
+                            'asn_ip_equipment__basic',
                         )
                     },
                     'obj': 'asn'
                 },
                 'asn__details': {
-                    'serializer': AsV4Serializer,
+                    'serializer': AsnV4Serializer,
                     'kwargs': {
                         'kind': 'details',
                         'prohibited': (
-                            'as_ip_equipment__details',
+                            'asn_ip_equipment__details',
                         )
                     },
                     'obj': 'asn'

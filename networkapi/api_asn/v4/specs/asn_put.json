@@ -19,6 +19,26 @@
           },
           "description": {
             "type": "string"
+          },
+          "asn_ip_equipment": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "asn": {
+                  "type": "integer"
+                },
+                "ipv4_equipment": {
+                  "type": "integer"
+                },
+                "ipv6_equipment": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "asn"
+              ]
+            }
           }
         },
         "required": [

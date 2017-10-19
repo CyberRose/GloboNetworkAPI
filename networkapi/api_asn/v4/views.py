@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 # Create your views here.
 from django.db.transaction import commit_on_success
-from networkapi.api_as.v4.permissions import Read
-from networkapi.api_as.v4.permissions import Write
+from networkapi.api_asn.v4.permissions import Read
+from networkapi.api_asn.v4.permissions import Write
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from networkapi.api_as.v4 import facade
-from networkapi.api_as.v4 import serializers
+from networkapi.api_asn.v4 import facade
+from networkapi.api_asn.v4 import serializers
 from networkapi.settings import SPECS
 from networkapi.util.classes import CustomAPIView
 from networkapi.util.decorators import logs_method_apiview
@@ -19,14 +19,14 @@ from networkapi.util.json_validate import json_validate
 from networkapi.util.json_validate import raise_json_validate
 
 
-class AsDBView(CustomAPIView):
+class AsnDBView(CustomAPIView):
 
     @logs_method_apiview
     @raise_json_validate('')
     @permission_classes_apiview((IsAuthenticated, Read))
     @prepare_search
     def get(self, request, *args, **kwargs):
-        """Returns a list of AS's by ids ou dict."""
+        """Returns a list of ASN's by ids ou dict."""
 
         if not kwargs.get('obj_ids'):
             obj_model = facade.get_as_by_search(self.search)
@@ -38,7 +38,7 @@ class AsDBView(CustomAPIView):
             only_main_property = True
             obj_model = None
 
-        # serializer AS's
+        # serializer ASN's
         serializer_as = serializers.AsV4Serializer(
             as_s,
             many=True,
@@ -60,18 +60,18 @@ class AsDBView(CustomAPIView):
         return Response(data, status=status.HTTP_200_OK)
 
     @logs_method_apiview
-    @raise_json_validate('as_post_v4')
+    @raise_json_validate('asn_post_v4')
     @permission_classes_apiview((IsAuthenticated, Write))
     @commit_on_success
     def post(self, request, *args, **kwargs):
-        """Create new AS."""
+        """Create new ASN."""
 
         as_s = request.DATA
-        json_validate(SPECS.get('as_post_v4')).validate(as_s)
+        json_validate(SPECS.get('asn_post_v4')).validate(as_s)
         response = list()
         for as_ in as_s['asns']:
 
-            as_obj = facade.create_as(as_)
+            as_obj = facade.create_asn(as_)
             response.append({'id': as_obj.id})
 
         return Response(response, status=status.HTTP_201_CREATED)
@@ -81,14 +81,14 @@ class AsDBView(CustomAPIView):
     @permission_classes_apiview((IsAuthenticated, Write))
     @commit_on_success
     def put(self, request, *args, **kwargs):
-        """Update AS."""
+        """Update ASN."""
 
         as_s = request.DATA
         json_validate(SPECS.get('as_put_v4')).validate(as_s)
         response = list()
         for as_ in as_s['asns']:
 
-            as_obj = facade.update_as(as_)
+            as_obj = facade.update_asn(as_)
             response.append({
                 'id': as_obj.id
             })
@@ -100,9 +100,9 @@ class AsDBView(CustomAPIView):
     @permission_classes_apiview((IsAuthenticated, Write))
     @commit_on_success
     def delete(self, request, *args, **kwargs):
-        """Delete AS."""
+        """Delete ASN."""
 
         obj_ids = kwargs['obj_ids'].split(';')
-        facade.delete_as(obj_ids)
+        facade.delete_asn(obj_ids)
 
         return Response({}, status=status.HTTP_200_OK)

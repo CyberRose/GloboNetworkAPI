@@ -81,7 +81,7 @@ class EquipmentDeleteTestCase(NetworkApiTestCase):
         
         # Check if AS was also deleted
         response = self.client.get(
-            '/api/v4/as/4/',
+            '/api/v4/asn/4/',
             HTTP_AUTHORIZATION=self.authorization
         )
 

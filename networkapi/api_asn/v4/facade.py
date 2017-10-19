@@ -3,10 +3,10 @@ import logging
 
 from django.core.exceptions import FieldError
 
-from networkapi.api_as.models import As
-from networkapi.api_as.v4 import exceptions
-from networkapi.api_as.v4.exceptions import AsErrorV4
-from networkapi.api_as.v4.exceptions import AsNotFoundError, AsError
+from networkapi.api_asn.models import Asn
+from networkapi.api_asn.v4 import exceptions
+from networkapi.api_asn.v4.exceptions import AsnErrorV4
+from networkapi.api_asn.v4.exceptions import AsnNotFoundError, AsnError
 from networkapi.api_rest.exceptions import NetworkAPIException
 from networkapi.api_rest.exceptions import ObjectDoesNotExistException
 from networkapi.api_rest.exceptions import ValidationAPIException
@@ -19,7 +19,7 @@ def get_as_by_search(search=dict()):
     """Return a list of AS's by dict."""
 
     try:
-        as_s = As.objects.filter()
+        as_s = Asn.objects.filter()
         as_map = build_query_to_datatable_v3(as_s, search)
     except FieldError as e:
         raise ValidationAPIException(str(e))
@@ -37,9 +37,9 @@ def get_as_by_id(as_id):
     """
 
     try:
-        as_ = As.get_by_pk(id=as_id)
-    except AsNotFoundError, e:
-        raise exceptions.AsDoesNotExistException(str(e))
+        as_ = Asn.get_by_pk(id=as_id)
+    except AsnNotFoundError, e:
+        raise exceptions.AsnDoesNotExistException(str(e))
 
     return as_
 
@@ -56,27 +56,27 @@ def get_as_by_ids(autonomous_systems_ids):
         try:
             as_ = get_as_by_id(as_id).id
             as_ids.append(as_)
-        except exceptions.AsDoesNotExistException, e:
+        except exceptions.AsnDoesNotExistException, e:
             raise ObjectDoesNotExistException(str(e))
         except Exception, e:
             raise NetworkAPIException(str(e))
 
-    as_s = As.objects.filter(id__in=as_ids)
+    as_s = Asn.objects.filter(id__in=as_ids)
 
     return as_s
 
 
-def update_as(as_):
+def update_asn(as_):
     """Update AS."""
 
     try:
         as_obj = get_as_by_id(as_.get('id'))
         as_obj.update_v4(as_)
-    except AsErrorV4, e:
+    except AsnErrorV4, e:
         raise ValidationAPIException(str(e))
     except ValidationAPIException, e:
         raise ValidationAPIException(str(e))
-    except exceptions.AsDoesNotExistException, e:
+    except exceptions.AsnDoesNotExistException, e:
         raise ObjectDoesNotExistException(str(e))
     except Exception, e:
         raise NetworkAPIException(str(e))
@@ -84,13 +84,13 @@ def update_as(as_):
     return as_obj
 
 
-def create_as(as_):
+def create_asn(as_):
     """Create AS."""
 
     try:
-        as_obj = As()
+        as_obj = Asn()
         as_obj.create_v4(as_)
-    except AsErrorV4, e:
+    except AsnErrorV4, e:
         raise ValidationAPIException(str(e))
     except ValidationAPIException, e:
         raise ValidationAPIException(str(e))
@@ -100,18 +100,18 @@ def create_as(as_):
     return as_obj
 
 
-def delete_as(as_ids):
+def delete_asn(as_ids):
     """Delete AS."""
 
     for as_id in as_ids:
         try:
             as_obj = get_as_by_id(as_id)
             as_obj.delete_v4()
-        except exceptions.AsDoesNotExistException, e:
+        except exceptions.AsnDoesNotExistException, e:
             raise ObjectDoesNotExistException(str(e))
-        except exceptions.AsAssociatedToEquipmentError, e:
+        except exceptions.AsnAssociatedToEquipmentError, e:
             raise ValidationAPIException(str(e))
-        except AsError, e:
+        except AsnError, e:
             raise NetworkAPIException(str(e))
         except Exception, e:
             raise NetworkAPIException(str(e))

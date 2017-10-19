@@ -5,11 +5,11 @@ from _mysql_exceptions import OperationalError
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 
-from networkapi.api_as.v4 import exceptions
+from networkapi.api_asn.v4 import exceptions
 from networkapi.models.BaseModel import BaseModel
 
 
-class As(BaseModel):
+class Asn(BaseModel):
 
     id = models.AutoField(
         primary_key=True,
@@ -27,15 +27,15 @@ class As(BaseModel):
         max_length=200
     )
 
-    def _get_as_ip_equipment(self):
-        return self.asipequipment_set.all()
+    def _get_asn_ip_equipment(self):
+        return self.asnipequipment_set.all()
 
-    as_ip_equipment = property(_get_as_ip_equipment)
+    asn_ip_equipment = property(_get_asn_ip_equipment)
 
-    log = logging.getLogger('As')
+    log = logging.getLogger('Asn')
 
     class Meta(BaseModel.Meta):
-        db_table = u'as'
+        db_table = u'asn'
         managed = True
 
     @classmethod
@@ -44,26 +44,26 @@ class As(BaseModel):
 
         :return: AS.
 
-        :raise AsNotFoundError: As not registered.
-        :raise AsError: Failed to search for the As.
+        :raise AsnNotFoundError: As not registered.
+        :raise AsnError: Failed to search for the As.
         :raise OperationalError: Lock wait timeout exceeded
         """
         try:
-            return As.objects.get(id=id)
+            return Asn.objects.get(id=id)
         except ObjectDoesNotExist, e:
             cls.log.error(u'AS not found. pk {}'.format(id))
-            raise exceptions.AsNotFoundError(id)
+            raise exceptions.AsnNotFoundError(id)
         except OperationalError, e:
             cls.log.error(u'Lock wait timeout exceeded.')
             raise OperationalError(
                 e, u'Lock wait timeout exceeded; try restarting transaction')
         except Exception, e:
             cls.log.error(u'Failure to search the AS.')
-            raise exceptions.AsError(
+            raise exceptions.AsnError(
                 e, u'Failure to search the AS.')
 
     def create_v4(self, as_map):
-        """Create AS."""
+        """Create ASN."""
 
         self.name = as_map.get('name')
         self.description = as_map.get('description')
@@ -71,7 +71,7 @@ class As(BaseModel):
         self.save()
 
     def update_v4(self, as_map):
-        """Update AS."""
+        """Update ASN."""
 
         self.name = as_map.get('name')
         self.description = as_map.get('description')
@@ -79,23 +79,23 @@ class As(BaseModel):
         self.save()
 
     def delete_v4(self):
-        """Delete AS.
+        """Delete ASN.
 
         :raise ASAssociatedToEquipmentError: AS cannot be deleted because it
                                              is associated to at least one
                                              equipment.
         """
         try:
-            if self.asipequipment_set.count() > 0:
+            if self.asnipequipment_set.count() > 0:
                 ids_ipv4_equipments = [asequipment.ipv4_equipment.
                                        equipamento.id for asequipment in
-                                       self.asipequipment_set.all()
+                                       self.asnipequipment_set.all()
                                        if asequipment.ipv4_equipment
                                        is not None]
 
                 ids_ipv6_equipments = [asequipment.ipv6_equipment.
                                        equipamento_id for asequipment in
-                                       self.asipequipment_set.all()
+                                       self.asnipequipment_set.all()
                                        if asequipment.ipv6_equipment
                                        is not None]
 
@@ -106,20 +106,20 @@ class As(BaseModel):
                 msg = u'Cannot delete AS {} because it is associated ' \
                       u'with Equipments {}.'. \
                     format(self.id, ids_equipments)
-                raise exceptions.AsAssociatedToEquipmentError(
+                raise exceptions.AsnAssociatedToEquipmentError(
                     msg
                 )
 
-            super(As, self).delete()
+            super(Asn, self).delete()
 
-        except exceptions.AsAssociatedToEquipmentError, e:
+        except exceptions.AsnAssociatedToEquipmentError, e:
             self.log.error(e)
-            raise exceptions.AsAssociatedToEquipmentError(e.detail)
+            raise exceptions.AsnAssociatedToEquipmentError(e.detail)
         except Exception, e:
             self.log.error(e)
-            raise exceptions.AsErrorV4(e)
+            raise exceptions.AsnErrorV4(e)
 
-class AsIpEquipment(BaseModel):
+class AsnIpEquipment(BaseModel):
 
     id = models.AutoField(
         primary_key=True,
@@ -127,7 +127,7 @@ class AsIpEquipment(BaseModel):
     )
 
     asn = models.ForeignKey(
-        'api_as.As',
+        'api_asn.Asn',
         db_column='id_as',
         null=False
     )
@@ -144,10 +144,10 @@ class AsIpEquipment(BaseModel):
         null=True
     )
 
-    log = logging.getLogger('AsIpEquipment')
+    log = logging.getLogger('AsnIpEquipment')
 
     class Meta(BaseModel.Meta):
-        db_table = u'as_ip_equipment'
+        db_table = u'asn_ip_equipment'
         managed = True
 
     def create_v4(self):

@@ -4,7 +4,7 @@
       "id_as": 1,
       "equipment": 4
     },
-    "model": "api_as.asequipment",
+    "model": "api_asn.asequipment",
     "pk": 1
   }
 ]

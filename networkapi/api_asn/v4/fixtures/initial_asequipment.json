@@ -4,7 +4,7 @@
       "id_as": 1,
       "equipment": 1
     },
-    "model": "api_as.asequipment",
+    "model": "api_asn.asequipment",
     "pk": 1
   },
   {
@@ -12,7 +12,7 @@
       "id_as": 1,
       "equipment": 2
     },
-    "model": "api_as.asequipment",
+    "model": "api_asn.asequipment",
     "pk": 2
   },
   {
@@ -20,7 +20,7 @@
       "id_as": 2,
       "equipment": 3
     },
-    "model": "api_as.asequipment",
+    "model": "api_asn.asequipment",
     "pk": 3
   },
   {
@@ -28,7 +28,7 @@
       "id_as": 2,
       "equipment": 4
     },
-    "model": "api_as.asequipment",
+    "model": "api_asn.asequipment",
     "pk": 4
   }
 ]

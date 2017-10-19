@@ -19,7 +19,7 @@ api_prefix = r'^api/'
 urlpatterns = patterns(
     '',
     # new API URL patterns are all prefixed with '/api/'
-    url(api_prefix, include('networkapi.api_as.urls')),
+    url(api_prefix, include('networkapi.api_asn.urls')),
     url(api_prefix, include('networkapi.api_deploy.urls')),
     url(api_prefix, include('networkapi.api_environment.urls')),
     url(api_prefix, include('networkapi.api_environment_vip.urls')),

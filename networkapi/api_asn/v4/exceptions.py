@@ -3,21 +3,21 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 
 
-class AsNotFoundError(APIException):
+class AsnNotFoundError(APIException):
     status_code = status.HTTP_404_NOT_FOUND
 
     def __init__(self, msg):
         self.detail = u'AS %s do not exist.' % (msg)
 
 
-class AsError(APIException):
+class AsnError(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
 
     def __init__(self, msg):
         self.detail = msg
 
 
-class AsAssociatedToEquipmentError(APIException):
+class AsnAssociatedToEquipmentError(APIException):
     status_code = status.HTTP_400_BAD_REQUEST
     default_detail = 'AS is associated with at least one Equipment.'
 
@@ -28,7 +28,7 @@ class AsAssociatedToEquipmentError(APIException):
             self.detail = self.default_detail
 
 
-class AsErrorV4(Exception):
+class AsnErrorV4(Exception):
 
     """Generic exception for everything related to AS."""
 
@@ -39,7 +39,7 @@ class AsErrorV4(Exception):
         return str(self.message)
 
 
-class AsDoesNotExistException(APIException):
+class AsnDoesNotExistException(APIException):
     status_code = status.HTTP_404_NOT_FOUND
-    default_detail = 'AS doesn not exists.'
+    default_detail = 'ASN does not exists.'
 

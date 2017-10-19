@@ -40,14 +40,14 @@ class AsPostSuccessTestCase(NetworkApiTestCase):
 
         # Does POST request
         response = self.client.post(
-            '/api/v4/as/',
+            '/api/v4/asn/',
             data=json.dumps(self.load_json_file(name_file)),
             content_type='application/json',
             HTTP_AUTHORIZATION=self.authorization)
 
         self.compare_status(201, response.status_code)
 
-        get_url = '/api/v4/as/%s/?kind=basic&exclude=equipments' % \
+        get_url = '/api/v4/asn/%s/?kind=basic&exclude=equipments' % \
                   response.data[0]['id']
 
         name_file_get = json_path % 'get/basic/pk_1.json'
@@ -69,14 +69,14 @@ class AsPostSuccessTestCase(NetworkApiTestCase):
 
         # Does POST request
         response = self.client.post(
-            '/api/v4/as/',
+            '/api/v4/asn/',
             data=json.dumps(self.load_json_file(name_file)),
             content_type='application/json',
             HTTP_AUTHORIZATION=self.authorization)
 
         self.compare_status(201, response.status_code)
 
-        get_url = '/api/v4/as/%s;%s/?kind=basic&exclude=equipments' \
+        get_url = '/api/v4/asn/%s;%s/?kind=basic&exclude=equipments' \
                   % (response.data[0]['id'], response.data[1]['id'])
 
         name_file_get = json_path % 'get/basic/pk_1;2.json'
