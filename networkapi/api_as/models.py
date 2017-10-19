@@ -82,10 +82,36 @@ class As(BaseModel):
     def delete_v4(self):
         """Delete AS.
 
+        :raise ASAssociatedToEquipmentError: AS cannot be deleted because it
+                                             is associated to at least one
+                                             equipment.
         """
         try:
-            pass
-            # TODO BGP Refactor
+            if self.asipequipment_set.count() > 0:
+                ids_ipv4_equipments = [asequipment.ipv4_equipment.
+                                       equipamento.id for asequipment in
+                                       self.asipequipment_set.all()
+                                       if asequipment.ipv4_equipment
+                                       is not None]
+
+                ids_ipv6_equipments = [asequipment.ipv6_equipment.
+                                       equipamento_id for asequipment in
+                                       self.asipequipment_set.all()
+                                       if asequipment.ipv6_equipment
+                                       is not None]
+
+                ids_equipments = list(set(ids_ipv4_equipments +
+                                          ids_ipv6_equipments))
+
+                ids_equipments = map(int, ids_equipments)
+                msg = u'Cannot delete AS {} because it is associated ' \
+                      u'with Equipments {}.'. \
+                    format(self.id, ids_equipments)
+                raise exceptions.AsAssociatedToEquipmentError(
+                    msg
+                )
+
+            super(As, self).delete()
 
         except exceptions.AsAssociatedToEquipmentError, e:
             self.log.error(e)
