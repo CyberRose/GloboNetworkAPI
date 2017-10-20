@@ -7,6 +7,7 @@ from django.db import models
 
 from networkapi.api_asn.v4 import exceptions
 from networkapi.models.BaseModel import BaseModel
+from networkapi.util.geral import get_model
 
 
 class Asn(BaseModel):
@@ -40,18 +41,18 @@ class Asn(BaseModel):
 
     @classmethod
     def get_by_pk(cls, id):
-        """Get AS by id.
+        """Get ASN by id.
 
-        :return: AS.
+        :return: ASN.
 
-        :raise AsnNotFoundError: As not registered.
-        :raise AsnError: Failed to search for the As.
+        :raise AsnNotFoundError: Asn not registered.
+        :raise AsnError: Failed to search for the Asn.
         :raise OperationalError: Lock wait timeout exceeded
         """
         try:
             return Asn.objects.get(id=id)
         except ObjectDoesNotExist, e:
-            cls.log.error(u'AS not found. pk {}'.format(id))
+            cls.log.error(u'ASN not found. pk {}'.format(id))
             raise exceptions.AsnNotFoundError(id)
         except OperationalError, e:
             cls.log.error(u'Lock wait timeout exceeded.')
@@ -62,26 +63,53 @@ class Asn(BaseModel):
             raise exceptions.AsnError(
                 e, u'Failure to search the AS.')
 
-    def create_v4(self, as_map):
+    def create_v4(self, asn_map):
         """Create ASN."""
 
-        self.name = as_map.get('name')
-        self.description = as_map.get('description')
+        self.name = asn_map.get('name')
+        self.description = asn_map.get('description')
 
         self.save()
 
-    def update_v4(self, as_map):
+        asnipequipment_model = get_model('api_asn', 'AsnIpEquipment')
+        for asn_ip_equipment in asn_map.get('asn_ip_equipment', []):
+            asnipequipment_model().create_v4({
+                'asn': self.id,
+                'ipv4_equipment': asn_ip_equipment.get('ipv4_equipment'),
+                'ipv6_equipment': asn_ip_equipment.get('ipv6_equipment')
+            })
+
+    def update_v4(self, asn_map):
         """Update ASN."""
 
-        self.name = as_map.get('name')
-        self.description = as_map.get('description')
+        self.name = asn_map.get('name')
+        self.description = asn_map.get('description')
 
         self.save()
+
+        if asn_map.get('asn_ip_equipment'):
+            asnipequipment_model = get_model('api_asn', 'AsnIpEquipment')
+
+            asnipequipment_db = asnipequipment_model.objects.filter(asn__id=self.id)
+            asnipequipment_db_ids = asnipequipment_db.values_list('ipv4_equipment', flat=True)
+            asnipequipment_ids = asn_map.get('asn_ip_equipment')
+
+            # for as_ip_equipment in asnipequipment_ids:
+            #
+            #     if as_ip_equipment not in asnipequipment_db_ids:
+            #         asnipequipment_model().create_v4(
+            #             # {
+            #             #     'asn': self.id,
+            #             #     'ipv4_equipment': asn_ip_equipment.get('ipv4_equipment'),
+            #             #     'ipv6_equipment': asn_ip_equipment.get('ipv6_equipment')
+            #             # }
+            #         )
+
 
     def delete_v4(self):
         """Delete ASN.
 
-        :raise ASAssociatedToEquipmentError: AS cannot be deleted because it
+        :raise AsnAssociatedToEquipmentError: AS cannot be deleted because it
                                              is associated to at least one
                                              equipment.
         """
@@ -128,7 +156,7 @@ class AsnIpEquipment(BaseModel):
 
     asn = models.ForeignKey(
         'api_asn.Asn',
-        db_column='id_as',
+        db_column='id_asn',
         null=False
     )
 

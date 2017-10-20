@@ -1,0 +1,36 @@
+#-*- coding:utf-8 -*-
+SQL_UP = u"""
+
+CREATE TABLE IF NOT EXISTS `asn_ip_equipment` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `id_asn` INT UNSIGNED NOT NULL COMMENT '',
+  `id_ipv4_equipment` INT UNSIGNED NULL COMMENT '',
+  `id_ipv6_equipment` INT UNSIGNED NULL COMMENT '',
+  PRIMARY KEY (`id`),
+  INDEX `fk_asn_ip_equipment_asn_idx` (`id_asn` ASC),
+  INDEX `fk_asn_ip_equipment_ipv4_equipment_idx` (`id_ipv4_equipment` ASC),
+  INDEX `fk_asn_ip_equipment_ipv6_equipment_idx` (`id_ipv6_equipment` ASC),
+  CONSTRAINT `fk_asn_ip_equipment_asn`
+    FOREIGN KEY (`id_asn`)
+    REFERENCES `asn` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_asn_ip_equipment_ipv4_equipment`
+    FOREIGN KEY (`id_ipv4_equipment`)
+    REFERENCES `ips_dos_equipamentos` (`id_ips_dos_equipamentos`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_asn_ip_equipment_ipv6_equipment`
+    FOREIGN KEY (`id_ipv6_equipment`)
+    REFERENCES `ipsv6_dos_equipamentos` (`id_ipsv6_dos_equipamentos`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+"""
+
+SQL_DOWN = u"""
+
+DROP TABLE `asn_ip_equipment`;
+
+"""

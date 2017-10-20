@@ -3,11 +3,11 @@ SQL_UP = u"""
 
 ALTER TABLE `neighbor`
 ADD COLUMN `virtual_interface` VARCHAR(45) NULL AFTER `remote_ip`,
-ADD COLUMN `id_as_ip_equipment` INT UNSIGNED NOT NULL COMMENT '',
-ADD INDEX `fk_neighbor_id_as_ip_equipment_idx` (`id_as_ip_equipment` ASC),
-ADD CONSTRAINT `fk_neighbor_id_as_ip_equipment`
-    FOREIGN KEY (`id_as_ip_equipment`)
-    REFERENCES `as_ip_equipment` (`id`)
+ADD COLUMN `id_asn_ip_equipment` INT UNSIGNED NOT NULL COMMENT '',
+ADD INDEX `fk_neighbor_id_asn_ip_equipment_idx` (`id_asn_ip_equipment` ASC),
+ADD CONSTRAINT `fk_neighbor_id_asn_ip_equipment`
+    FOREIGN KEY (`id_asn_ip_equipment`)
+    REFERENCES `asn_ip_equipment` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
@@ -16,10 +16,10 @@ ADD CONSTRAINT `fk_neighbor_id_as_ip_equipment`
 SQL_DOWN = u"""
 
 ALTER TABLE `neighbor`
-DROP FOREIGN KEY `fk_neighbor_id_as_ip_equipment`;
+DROP FOREIGN KEY `fk_neighbor_id_asn_ip_equipment`;
 
 ALTER TABLE `neighbor`
-DROP COLUMN `id_as_ip_equipment`,
+DROP COLUMN `id_asn_ip_equipment`,
 DROP COLUMN `virtual_interface`;
 
 """

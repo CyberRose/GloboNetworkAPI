@@ -25,7 +25,7 @@ class Neighbor(BaseModel):
 
     asn_ip_equipment = models.ForeignKey(
         'api_asn.AsnIpEquipment',
-        db_column='id_as_ip_equipment',
+        db_column='id_asn_ip_equipment',
         null=False
     )
 
@@ -131,6 +131,7 @@ class Neighbor(BaseModel):
     def create_v4(self, neighbor_map):
         """Create Neighbor."""
 
+        self.asn_ip_equipment = neighbor_map.get('asn_ip_equipment')
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password =  neighbor_map.get('password')
@@ -150,6 +151,7 @@ class Neighbor(BaseModel):
     def update_v4(self, neighbor_map):
         """Update Neighbor."""
 
+        self.asn_ip_equipment = neighbor_map.get('asn_ip_equipment')
         self.remote_as = neighbor_map.get('remote_as')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password = neighbor_map.get('password')
