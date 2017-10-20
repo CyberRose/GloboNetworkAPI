@@ -29,10 +29,10 @@ class Neighbor(BaseModel):
         null=False
     )
 
-    remote_as = models.CharField(
+    remote_asn = models.CharField(
         blank=False,
         max_length=45,
-        db_column='remote_as'
+        db_column='remote_asn'
     )
 
     remote_ip = models.CharField(
@@ -83,8 +83,8 @@ class Neighbor(BaseModel):
     community = models.BooleanField(
         db_column='community')
 
-    remove_private_as = models.BooleanField(
-        db_column='remove_private_as')
+    remove_private_asn = models.BooleanField(
+        db_column='remove_private_asn')
 
     next_hop_self = models.BooleanField(
         db_column='next_hop_self')
@@ -132,7 +132,7 @@ class Neighbor(BaseModel):
         """Create Neighbor."""
 
         self.asn_ip_equipment = neighbor_map.get('asn_ip_equipment')
-        self.remote_as = neighbor_map.get('remote_as')
+        self.remote_asn = neighbor_map.get('remote_asn')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password =  neighbor_map.get('password')
         self.maximum_hops =  neighbor_map.get('maximum_hops')
@@ -141,7 +141,7 @@ class Neighbor(BaseModel):
         self.description = neighbor_map.get('description')
         self.soft_reconfiguration = neighbor_map.get('soft_reconfiguration')
         self.community = neighbor_map.get('community')
-        self.remove_private_as = neighbor_map.get('remove_private_as')
+        self.remove_private_asn = neighbor_map.get('remove_private_asn')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
         self.virtual_interface = neighbor_map.get('virtual_interface')
@@ -152,7 +152,7 @@ class Neighbor(BaseModel):
         """Update Neighbor."""
 
         self.asn_ip_equipment = neighbor_map.get('asn_ip_equipment')
-        self.remote_as = neighbor_map.get('remote_as')
+        self.remote_asn = neighbor_map.get('remote_asn')
         self.remote_ip = neighbor_map.get('remote_ip')
         self.password = neighbor_map.get('password')
         self.maximum_hops = neighbor_map.get('maximum_hops')
@@ -161,7 +161,7 @@ class Neighbor(BaseModel):
         self.description = neighbor_map.get('description')
         self.soft_reconfiguration = neighbor_map.get('soft_reconfiguration')
         self.community = neighbor_map.get('community')
-        self.remove_private_as = neighbor_map.get('remove_private_as')
+        self.remove_private_asn = neighbor_map.get('remove_private_asn')
         self.next_hop_self = neighbor_map.get('next_hop_self')
         self.kind = neighbor_map.get('kind')
         self.virtual_interface = neighbor_map.get('virtual_interface')

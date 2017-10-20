@@ -11,6 +11,12 @@ ADD CONSTRAINT `fk_neighbor_id_asn_ip_equipment`
     ON DELETE NO ACTION
     ON UPDATE NO ACTION;
 
+
+ALTER TABLE `neighbor` CHANGE `remote_as` `remote_asn` VARCHAR(45);
+ALTER TABLE `neighbor` CHANGE `remove_private_as` `remove_private_asn` TINYINT(1);
+
+;
+
 """
 
 SQL_DOWN = u"""
@@ -21,5 +27,8 @@ DROP FOREIGN KEY `fk_neighbor_id_asn_ip_equipment`;
 ALTER TABLE `neighbor`
 DROP COLUMN `id_asn_ip_equipment`,
 DROP COLUMN `virtual_interface`;
+
+ALTER TABLE `neighbor` CHANGE `remote_asn` `remote_as` VARCHAR(45);
+ALTER TABLE `neighbor` CHANGE `remove_private_asn` `remove_private_as` TINYINT(1);
 
 """
